@@ -220,11 +220,23 @@ public class StockRepository {
         stockListLiveData.setValue(stockList);
     }
 
+    /**
+     * ✅ แก้: บันทึก watchlist ให้มั่นใจว่า commit สำเร็จ
+     */
     private void saveWatchlistToPreferences() {
         List<String> symbols = new ArrayList<>(stockMap.keySet());
         String json = gson.toJson(symbols);
-        sharedPreferences.edit().putString(KEY_WATCHLIST, json).apply();
-        Log.d(TAG, "Watchlist saved to preferences");
+
+        // ใช้ commit() แทน apply() เพื่อให้บันทึกทันที
+        boolean success = sharedPreferences.edit()
+                .putString(KEY_WATCHLIST, json)
+                .commit();
+
+        if (success) {
+            Log.d(TAG, "Watchlist saved successfully: " + symbols);
+        } else {
+            Log.e(TAG, "Failed to save watchlist");
+        }
     }
 
     private void loadWatchlistFromPreferences() {

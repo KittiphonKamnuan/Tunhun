@@ -112,11 +112,13 @@
                     app:selectionRequired="true"
                     app:chipSpacing="8dp">
 
+                    <!-- ✅ แก้: chip_1d เป็น checked="true" แทน chip_1m -->
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_1d"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
                         android:text="D"
+                        android:checked="true"
                         android:textSize="12sp"
                         android:textColor="@color/chip_text_selector"
                         app:chipBackgroundColor="@color/chip_background_selector"
@@ -140,12 +142,12 @@
                         app:chipMinHeight="36dp"
                         style="@style/Widget.MaterialComponents.Chip.Choice" />
 
+                    <!-- ✅ แก้: ลบ checked="true" ออกจาก chip_1m -->
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_1m"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
                         android:text="1M"
-                        android:checked="true"
                         android:textSize="12sp"
                         android:textColor="@color/chip_text_selector"
                         app:chipBackgroundColor="@color/chip_background_selector"

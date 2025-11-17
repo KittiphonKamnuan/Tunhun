@@ -22,9 +22,15 @@ import java.util.List;
 public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
     private List<Stock> stockList;
     private OnStockRemoveListener removeListener;
+    private OnStockClickListener clickListener; // ✅ แก้: เพิ่ม click listener
 
     public interface OnStockRemoveListener {
         void onStockRemove(Stock stock);
+    }
+
+    // ✅ แก้: เพิ่ม interface สำหรับ click
+    public interface OnStockClickListener {
+        void onStockClick(Stock stock);
     }
 
     public StockAdapter() {
@@ -33,6 +39,11 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHol
 
     public void setOnStockRemoveListener(OnStockRemoveListener listener) {
         this.removeListener = listener;
+    }
+
+    // ✅ แก้: เพิ่ม setter สำหรับ click listener
+    public void setOnStockClickListener(OnStockClickListener listener) {
+        this.clickListener = listener;
     }
 
     public void setStockList(List<Stock> stocks) {
@@ -87,6 +98,13 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHol
             } else {
                 changeTextView.setTextColor(Color.parseColor("#EF4444"));  // negativeRed
             }
+
+            // ✅ แก้: Handle item click - เปิดหน้ารายละเอียด
+            itemView.setOnClickListener(v -> {
+                if (clickListener != null) {
+                    clickListener.onStockClick(stock);
+                }
+            });
 
             // Handle remove button click
             removeButton.setOnClickListener(v -> {

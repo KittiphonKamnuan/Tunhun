@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,18 +51,28 @@ public class StockDetailActivity extends AppCompatActivity {
     private ChipGroup chipGroupTimeframe;
     private ProgressBar chartLoading;
     private TextView chartErrorText;
+    private ImageButton btnBack;
+
+    // Stock Information TextViews
+    private TextView textOpenPrice;
+    private TextView textHighPrice;
+    private TextView textLowPrice;
+    private TextView textPrevClose;
 
     // Data
     private String symbol;
     private double price;
     private double changePercent;
-    private TimeFrame currentTimeFrame = TimeFrame.ONE_MONTH;
+    private TimeFrame currentTimeFrame = TimeFrame.ONE_DAY; // ✅ แก้เป็น ONE_DAY
 
     // Services and handlers
     private StockViewModel viewModel;
     private FinnhubApiService apiService;
     private Handler refreshHandler;
     private Runnable refreshRunnable;
+
+    // Store quote data
+    private StockQuote latestQuote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,13 +84,11 @@ public class StockDetailActivity extends AppCompatActivity {
         setupViewModel();
         setupApiService();
 
-        // Fetch quote if price is 0 or invalid
-        if (price <= 0) {
-            fetchQuoteData();
-        } else {
-            displayStockInfo();
-            loadChartData();
-        }
+        // ✅ แก้: เพิ่ม listener สำหรับปุ่ม back
+        setupBackButton();
+
+        // Fetch quote data เสมอเพื่อให้ได้ข้อมูล Open, High, Low, Prev Close
+        fetchQuoteData();
 
         setupChart();
         setupListeners();
@@ -115,6 +124,13 @@ public class StockDetailActivity extends AppCompatActivity {
         chipGroupTimeframe = findViewById(R.id.chip_group_timeframe);
         chartLoading = findViewById(R.id.chart_loading);
         chartErrorText = findViewById(R.id.chart_error_text);
+        btnBack = findViewById(R.id.btn_back);
+
+        // ✅ แก้: เพิ่ม TextView สำหรับ Stock Information
+        textOpenPrice = findViewById(R.id.text_open_price);
+        textHighPrice = findViewById(R.id.text_high_price);
+        textLowPrice = findViewById(R.id.text_low_price);
+        textPrevClose = findViewById(R.id.text_prev_close);
     }
 
     /**
@@ -132,6 +148,13 @@ public class StockDetailActivity extends AppCompatActivity {
     }
 
     /**
+     * ✅ แก้: เพิ่ม method สำหรับปุ่ม back
+     */
+    private void setupBackButton() {
+        btnBack.setOnClickListener(v -> finish());
+    }
+
+    /**
      * Fetches current quote data from API.
      */
     private void fetchQuoteData() {
@@ -141,10 +164,12 @@ public class StockDetailActivity extends AppCompatActivity {
             @Override
             public void onSuccess(StockQuote quote) {
                 runOnUiThread(() -> {
+                    latestQuote = quote;
                     price = quote.getCurrentPrice();
                     changePercent = quote.getPercentChange();
                     Log.d(TAG, "Quote fetched: price=" + price + ", change=" + changePercent + "%");
                     displayStockInfo();
+                    displayStockInformation(); // ✅ แก้: แสดงข้อมูล Open, High, Low, Prev Close
                     loadChartData();
                 });
             }
@@ -180,6 +205,23 @@ public class StockDetailActivity extends AppCompatActivity {
         // Set change with formatted text and color
         changeText.setText(StockColorHelper.formatChangePercent(changePercent));
         changeText.setTextColor(StockColorHelper.getStockColor(this, changePercent));
+    }
+
+    /**
+     * ✅ แก้: เพิ่ม method สำหรับแสดง Stock Information
+     */
+    private void displayStockInformation() {
+        if (latestQuote != null) {
+            textOpenPrice.setText(String.format("$%.2f", latestQuote.getOpenPrice()));
+            textHighPrice.setText(String.format("$%.2f", latestQuote.getHighPrice()));
+            textLowPrice.setText(String.format("$%.2f", latestQuote.getLowPrice()));
+            textPrevClose.setText(String.format("$%.2f", latestQuote.getPreviousClose()));
+        } else {
+            textOpenPrice.setText("--");
+            textHighPrice.setText("--");
+            textLowPrice.setText("--");
+            textPrevClose.setText("--");
+        }
     }
 
     /**
@@ -326,7 +368,7 @@ public class StockDetailActivity extends AppCompatActivity {
         } else if (chipId == R.id.chip_max) {
             return TimeFrame.MAX;
         }
-        return TimeFrame.ONE_MONTH; // Default
+        return TimeFrame.ONE_DAY; // ✅ แก้: Default เป็น ONE_DAY
     }
 
     /**
