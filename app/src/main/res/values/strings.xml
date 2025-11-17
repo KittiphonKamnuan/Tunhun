@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">ทันหุ้น</string>
+
+    <!-- Navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_watchlist">Watchlist</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Dashboard -->
+    <string name="trending_stocks">Trending Stocks</string>
+    <string name="popular_stocks">Popular Stocks</string>
+    <string name="market_movers">Market Movers</string>
+
+    <!-- Stock Detail -->
+    <string name="add_to_watchlist">Add to Watchlist</string>
+    <string name="remove_from_watchlist">Remove from Watchlist</string>
+    <string name="stock_details">Stock Details</string>
+
+    <!-- Watchlist -->
+    <string name="my_watchlist">My Watchlist</string>
+    <string name="empty_watchlist">Your watchlist is empty</string>
+    <string name="empty_watchlist_desc">Start adding stocks from Dashboard</string>
+</resources>

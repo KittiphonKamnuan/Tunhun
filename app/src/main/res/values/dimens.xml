@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen padding and margins -->
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="screen_padding_large">20dp</dimen>
+    <dimen name="item_padding">16dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="section_margin">24dp</dimen>
+
+    <!-- Component sizes -->
+    <dimen name="touch_target_min">48dp</dimen>
+    <dimen name="icon_size_small">24dp</dimen>
+    <dimen name="icon_size_medium">32dp</dimen>
+    <dimen name="icon_size_large">48dp</dimen>
+    <dimen name="button_height">48dp</dimen>
+    <dimen name="search_bar_height">56dp</dimen>
+    <dimen name="bottom_nav_height">56dp</dimen>
+
+    <!-- Card and container sizes -->
+    <dimen name="card_corner_radius">16dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="market_card_height">180dp</dimen>
+    <dimen name="chart_height">350dp</dimen>
+    <dimen name="stock_item_height">80dp</dimen>
+
+    <!-- Text sizes -->
+    <dimen name="text_micro">10sp</dimen>
+    <dimen name="text_tiny">12sp</dimen>
+    <dimen name="text_small">14sp</dimen>
+    <dimen name="text_body">16sp</dimen>
+    <dimen name="text_subtitle">18sp</dimen>
+    <dimen name="text_title">20sp</dimen>
+    <dimen name="text_headline">24sp</dimen>
+    <dimen name="text_large_title">28sp</dimen>
+    <dimen name="text_display">32sp</dimen>
+    <dimen name="text_price">36sp</dimen>
+    <dimen name="text_hero">48sp</dimen>
+
+    <!-- Empty state -->
+    <dimen name="empty_state_icon_size">64dp</dimen>
+    <dimen name="empty_state_spacing">16dp</dimen>
+
+    <!-- Avatar -->
+    <dimen name="avatar_size">40dp</dimen>
+    <dimen name="avatar_size_small">32dp</dimen>
+    <dimen name="avatar_size_large">56dp</dimen>
+
+    <!-- Spacing -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">12dp</dimen>
+    <dimen name="spacing_normal">16dp</dimen>
+    <dimen name="spacing_large">20dp</dimen>
+    <dimen name="spacing_xl">24dp</dimen>
+    <dimen name="spacing_xxl">32dp</dimen>
+</resources>

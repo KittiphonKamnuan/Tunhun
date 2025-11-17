@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Minimalist Light Mode -->
+    <color name="background_light">#FFFFFF</color>
+    <color name="surface_light">#F8F9FA</color>
+    <color name="textPrimary_light">#1C1C1E</color>
+    <color name="textSecondary_light">#8E8E93</color>
+
+    <!-- Minimalist Dark Mode (optional for future) -->
+    <color name="background_dark">#0A0E27</color>
+    <color name="surface_dark">#1A1E3C</color>
+    <color name="textPrimary_dark">#FFFFFF</color>
+    <color name="textSecondary_dark">#B0B0B0</color>
+
+    <!-- Accent Colors (Minimalist) -->
+    <color name="positiveGreen">#10B981</color>
+    <color name="negativeRed">#EF4444</color>
+    <color name="accentBlue">#3B82F6</color>
+    <color name="accentPurple">#6366F1</color>
+
+    <!-- Current Theme (Light Mode) -->
+    <color name="background">#FFFFFF</color>
+    <color name="surface">#F8F9FA</color>
+    <color name="card_background">#FFFFFF</color>
+
+    <color name="text_primary">#1C1C1E</color>
+    <color name="text_secondary">#8E8E93</color>
+    <color name="text_hint">#C7C7CC</color>
+
+    <color name="positive_green">#10B981</color>
+    <color name="negative_red">#EF4444</color>
+    <color name="primary">#3B82F6</color>
+    <color name="accent">#6366F1</color>
+
+    <!-- Other -->
+    <color name="divider">#E5E5EA</color>
+    <color name="border">#D1D1D6</color>
+    <color name="ripple">#10000000</color>
+
+    <!-- Premium Gradient Colors for Stock Avatars -->
+    <color name="gradient_blue_start">#667EEA</color>
+    <color name="gradient_blue_end">#764BA2</color>
+
+    <color name="gradient_green_start">#10B981</color>
+    <color name="gradient_green_end">#059669</color>
+
+    <color name="gradient_purple_start">#8B5CF6</color>
+    <color name="gradient_purple_end">#6366F1</color>
+
+    <color name="gradient_orange_start">#F59E0B</color>
+    <color name="gradient_orange_end">#EF4444</color>
+
+    <color name="gradient_pink_start">#EC4899</color>
+    <color name="gradient_pink_end">#8B5CF6</color>
+
+    <color name="gradient_teal_start">#14B8A6</color>
+    <color name="gradient_teal_end">#06B6D4</color>
+
+    <color name="gradient_indigo_start">#4F46E5</color>
+    <color name="gradient_indigo_end">#3B82F6</color>
+
+    <color name="gradient_red_start">#EF4444</color>
+    <color name="gradient_red_end">#DC2626</color>
+
+    <!-- Legacy -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

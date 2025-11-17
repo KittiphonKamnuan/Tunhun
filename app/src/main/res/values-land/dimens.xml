@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Landscape mode - Reduced vertical spacing, optimized for wide screens -->
+
+    <!-- Reduce vertical padding for limited height -->
+    <dimen name="screen_padding">12dp</dimen>
+    <dimen name="screen_padding_large">16dp</dimen>
+    <dimen name="section_margin">16dp</dimen>
+
+    <!-- Reduce card and container heights -->
+    <dimen name="market_card_height">140dp</dimen>
+    <dimen name="chart_height">280dp</dimen>
+    <dimen name="stock_item_height">72dp</dimen>
+
+    <!-- Slightly smaller text for better space utilization -->
+    <dimen name="text_display">28sp</dimen>
+    <dimen name="text_price">32sp</dimen>
+    <dimen name="text_hero">40sp</dimen>
+
+    <!-- Empty state -->
+    <dimen name="empty_state_icon_size">48dp</dimen>
+    <dimen name="empty_state_spacing">12dp</dimen>
+
+    <!-- Reduced vertical spacing -->
+    <dimen name="spacing_xl">16dp</dimen>
+    <dimen name="spacing_xxl">20dp</dimen>
+</resources>
