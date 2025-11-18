@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">ทันหุ้น</string>
+
+    <string name="nav_home">หน้าแรก</string>
+    <string name="nav_portfolio">พอร์ต</string>
+    <string name="nav_search">ค้นหา</string>
+    <string name="nav_profile">โปรไฟล์</string>
+
+    <string name="welcome_prefix">ยินดีต้อนรับสู่</string>
+    <string name="app_dashboard_title">หน้าหลัก</string>
+    <string name="search_hint">ค้นหาหุ้น...</string>
+    <string name="market_status_label">สถานะตลาด</string>
+    <string name="market_status_open">ตลาดสหรัฐฯ เปิด</string>
+    <string name="market_status_closed">ตลาดสหรัฐฯ ปิด</string>
+    <string name="market_hours">เวลาทำการตลาด</string>
+    <string name="market_credit">ข้อมูลราคาหุ้นเรียลไทม์โดย Finnhub</string>
+    <string name="trending_stocks">หุ้นมาแรง</string>
+    <string name="trending_desc">มีการซื้อขายสูงสุดวันนี้</string>
+    <string name="popular_stocks">หุ้นยอดนิยม</string>
+    <string name="popular_desc">คัดสรรเพื่อนักลงทุน</string>
+    <string name="view_all">ดูทั้งหมด</string>
+
+    <string name="balance_label">เงินคงเหลือ</string>
+    <string name="total_value_label">มูลค่ารวม</string>
+    <string name="profit_loss_label">กำไร/ขาดทุน</string>
+    <string name="holdings_label">หุ้นที่ถืออยู่</string>
+    <string name="empty_portfolio_title">ยังไม่มีหุ้นในพอร์ต</string>
+    <string name="empty_portfolio_desc">ซื้อหุ้นเพื่อเริ่มต้นลงทุน</string>
+    <string name="search_page_title">ค้นหาหุ้น</string>
+    <string name="search_input_hint">พิมพ์ชื่อหุ้นเพื่อค้นหา...</string>
+    <string name="search_no_result">ไม่พบหุ้นที่ค้นหา</string>
+    <string name="session_regular">ตลาดซื้อขายปกติ</string>
+    <string name="session_pre">ช่วงก่อนตลาดเปิด (Pre-Market)</string>
+    <string name="session_post">ช่วงหลังตลาดปิด (Post-Market)</string>
+    <string name="session_closed">ตลาดปิดทำการ</string>
+
+    <string name="user_name_placeholder">นักลงทุน</string>
+    <string name="menu_language">Language / ภาษา</string>
+    <string name="menu_settings">ตั้งค่า</string>
+    <string name="menu_about">เกี่ยวกับเรา</string>
+    <string name="menu_logout">ออกจากระบบ</string>
+    <string name="app_version">ทันหุ้น v1.0</string>
+</resources>

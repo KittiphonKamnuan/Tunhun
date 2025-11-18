@@ -183,9 +183,11 @@ public class DashboardFragment extends Fragment {
             public void onError(String error) {
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
-                        // Show default status on error
+                        // Show default status on error (Using Resources now)
                         marketEmojiText.setText("⚪");
-                        marketStatusText.setText("Market Status");
+
+                        // [FIX] ใช้ getString(R.string...) แทนการพิมพ์ข้อความตรงๆ
+                        marketStatusText.setText(R.string.market_status_label);
                         marketSessionText.setText("Loading...");
                     });
                 }
@@ -197,15 +199,46 @@ public class DashboardFragment extends Fragment {
      * Updates market status UI with fetched data
      */
     private void updateMarketStatusUI(MarketStatus status) {
-        // Set emoji (🟢 for open, 🔴 for closed)
+        // 1. จัดการ Emoji และ สถานะ (Open/Closed)
         marketEmojiText.setText(status.getStatusEmoji());
 
-        // Set status text
-        String statusText = "US " + status.getStatusText();
-        marketStatusText.setText(statusText);
+        boolean isOpen = false;
+        if (status.getStatusText() != null) {
+            isOpen = status.getStatusText().toLowerCase().contains("open");
+        }
 
-        // Set session text
-        marketSessionText.setText(status.getSessionText());
+        if (isOpen) {
+            marketStatusText.setText(R.string.market_status_open);
+        } else {
+            marketStatusText.setText(R.string.market_status_closed);
+        }
+
+        // 2. จัดการคำว่า "Market Hours" (Session Text) ให้เป็นภาษาไทย
+        String sessionRaw = status.getSessionText(); // ค่าที่ได้จาก API (เช่น "Regular Trading")
+
+        if (sessionRaw == null) {
+            marketSessionText.setText("");
+            return;
+        }
+
+        // แปลงเป็นตัวพิมพ์เล็กเพื่อเช็คง่ายๆ
+        String sessionLower = sessionRaw.toLowerCase();
+
+        if (sessionLower.contains("regular")) {
+            // ถ้าเจอคำว่า Regular -> ใช้คำไทย "ตลาดซื้อขายปกติ"
+            marketSessionText.setText(R.string.session_regular);
+        } else if (sessionLower.contains("pre")) {
+            // ถ้าเจอคำว่า Pre -> ใช้คำไทย "ช่วงก่อนตลาดเปิด"
+            marketSessionText.setText(R.string.session_pre);
+        } else if (sessionLower.contains("post") || sessionLower.contains("after")) {
+            // ถ้าเจอคำว่า Post -> ใช้คำไทย "ช่วงหลังตลาดปิด"
+            marketSessionText.setText(R.string.session_post);
+        } else if (sessionLower.contains("close")) {
+            marketSessionText.setText(R.string.session_closed);
+        } else {
+            // ถ้าไม่ตรงกับเงื่อนไขบนเลย ให้แสดงตามเดิมไปก่อน (กรณี API ส่งคำแปลกๆ มา)
+            marketSessionText.setText(sessionRaw);
+        }
     }
 
     /**

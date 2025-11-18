@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="@color/background">
 
-    <!-- Portfolio Summary Card -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,7 +24,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="เงินคงเหลือ"
+                android:text="@string/balance_label"
                 android:textSize="14sp"
                 android:alpha="0.9"
                 android:textColor="@android:color/white"
@@ -48,13 +47,11 @@
                 android:alpha="0.3"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Stats Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- Total Value -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -64,7 +61,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="มูลค่ารวม"
+                        android:text="@string/total_value_label"
                         android:textSize="12sp"
                         android:alpha="0.8"
                         android:textColor="@android:color/white" />
@@ -80,7 +77,6 @@
                         android:layout_marginTop="4dp" />
                 </LinearLayout>
 
-                <!-- Profit/Loss -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -91,7 +87,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="กำไร/ขาดทุน"
+                        android:text="@string/profit_loss_label"
                         android:textSize="12sp"
                         android:alpha="0.8"
                         android:textColor="@android:color/white" />
@@ -110,24 +106,21 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Holdings Title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="หุ้นที่ถืออยู่"
+        android:text="@string/holdings_label"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="12dp" />
 
-    <!-- Portfolio List Container -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- RecyclerView for portfolio holdings -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_watchlist"
             android:layout_width="match_parent"
@@ -136,7 +129,6 @@
             android:paddingHorizontal="20dp"
             android:paddingBottom="16dp" />
 
-        <!-- Empty State -->
         <LinearLayout
             android:id="@+id/empty_state"
             android:layout_width="wrap_content"
@@ -156,7 +148,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ยังไม่มีหุ้นในพอร์ต"
+                android:text="@string/empty_portfolio_title"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
@@ -165,7 +157,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ซื้อหุ้นเพื่อเริ่มต้น"
+                android:text="@string/empty_portfolio_desc"
                 android:textSize="14sp"
                 android:textColor="@color/text_secondary" />
         </LinearLayout>
