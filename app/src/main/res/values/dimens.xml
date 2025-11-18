@@ -53,4 +53,18 @@
     <dimen name="spacing_large">20dp</dimen>
     <dimen name="spacing_xl">24dp</dimen>
     <dimen name="spacing_xxl">32dp</dimen>
+
+    <!-- สำหรับมือถือ -->
+    <dimen name="text_size_large">24sp</dimen>
+    <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+
+    <dimen name="padding_large">24dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_tiny">4dp</dimen>
+
+    <!-- ขนาดไอคอน -->
+    <dimen name="icon_size">24dp</dimen>
+
 </resources>

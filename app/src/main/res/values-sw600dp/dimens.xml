@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- สำหรับ Tablet 7 นิ้ว -->
+    <dimen name="text_size_large">28sp</dimen>
+    <dimen name="text_size_medium">20sp</dimen>
+    <dimen name="text_size_small">16sp</dimen>
+
+    <dimen name="padding_large">32dp</dimen>
+    <dimen name="padding_medium">24dp</dimen>
+    <dimen name="padding_small">12dp</dimen>
+
+    <dimen name="card_elevation">6dp</dimen>
+
+
+    <dimen name="icon_size">32dp</dimen>
+
+
     <!-- Tablets (7" and larger) - Increased spacing and sizes -->
 
     <!-- Screen padding and margins -->

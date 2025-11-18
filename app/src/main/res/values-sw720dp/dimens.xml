@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- สำหรับ Tablet 10 นิ้ว -->
+    <dimen name="text_size_large">32sp</dimen>
+    <dimen name="text_size_medium">24sp</dimen>
+    <dimen name="text_size_small">18sp</dimen>
+
+    <dimen name="padding_large">40dp</dimen>
+    <dimen name="padding_medium">32dp</dimen>
+    <dimen name="padding_small">16dp</dimen>
+
+    <dimen name="card_elevation">8dp</dimen>
+    <dimen name="card_corner_radius">16dp</dimen>
+
+    <dimen name="icon_size">40dp</dimen>
+    <dimen name="icon_size_large">80dp</dimen>
+
+</resources>

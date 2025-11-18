@@ -4,6 +4,21 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- รองรับหน้าจอทุกขนาด -->
+    <supports-screens
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:xlargeScreens="true"
+        android:anyDensity="true"
+        android:resizeable="true" />
+
+    <!-- ทำให้ใช้งานได้บน Desktop/Chromebook -->
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,7 +30,8 @@
         android:theme="@style/Theme.Project">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,7 +43,8 @@
             android:name=".SettingsActivity"
             android:label="Settings"
             android:parentActivityName=".MainActivity"
-            android:exported="false">
+            android:exported="false"
+            android:configChanges="orientation|screenSize|screenLayout">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -37,7 +54,8 @@
             android:name=".StockDetailActivity"
             android:label="Stock Details"
             android:parentActivityName=".MainActivity"
-            android:exported="false">
+            android:exported="false"
+            android:configChanges="orientation|screenSize|screenLayout">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -48,7 +66,8 @@
             android:label="Search Stocks"
             android:parentActivityName=".MainActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize|screenLayout">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
