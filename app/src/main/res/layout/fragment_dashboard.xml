@@ -73,7 +73,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Market Summary Card -->
+        <!-- Market Status Indicator -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -101,23 +101,51 @@
                     android:textColor="#E0E0E0"
                     android:layout_marginBottom="8dp" />
 
-                <TextView
-                    android:id="@+id/text_market_status"
+                <!-- Market Status with Emoji -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="US Market Open"
-                    android:textSize="28sp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:id="@+id/text_market_emoji"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🟢"
+                        android:textSize="24sp"
+                        android:layout_marginEnd="12dp" />
+
+                    <TextView
+                        android:id="@+id/text_market_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="US Market Open"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="-0.01"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
+
+                <!-- Market Session -->
+                <TextView
+                    android:id="@+id/text_market_session"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Market Hours"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:letterSpacing="-0.01"
+                    android:alpha="0.95"
                     android:textColor="@android:color/white"
-                    android:layout_marginBottom="16dp" />
+                    android:layout_marginBottom="12dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Real-time stock prices powered by Finnhub"
-                    android:textSize="15sp"
-                    android:alpha="0.9"
+                    android:textSize="13sp"
+                    android:alpha="0.8"
                     android:textColor="@android:color/white" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

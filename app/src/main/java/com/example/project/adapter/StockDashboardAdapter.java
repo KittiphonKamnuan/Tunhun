@@ -11,11 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project.R;
 import com.example.project.model.Stock;
+import com.example.project.util.ChartHelper;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class StockDashboardAdapter extends RecyclerView.Adapter<StockDashboardAdapter.ViewHolder> {
 
@@ -72,6 +76,7 @@ public class StockDashboardAdapter extends RecyclerView.Adapter<StockDashboardAd
         private final TextView companyText;
         private final TextView priceText;
         private final TextView changeText;
+        private final LineChart miniChart;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +84,10 @@ public class StockDashboardAdapter extends RecyclerView.Adapter<StockDashboardAd
             companyText = itemView.findViewById(R.id.text_company_name);
             priceText = itemView.findViewById(R.id.text_price);
             changeText = itemView.findViewById(R.id.text_change);
+            miniChart = itemView.findViewById(R.id.mini_chart);
+
+            // Configure mini chart once
+            ChartHelper.configureMiniChart(miniChart);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -108,6 +117,51 @@ public class StockDashboardAdapter extends RecyclerView.Adapter<StockDashboardAd
             int color = stock.isPositiveChange() ?
                     Color.parseColor("#10B981") : Color.parseColor("#EF4444");
             changeText.setTextColor(color);
+
+            // Update mini chart with sparkline data
+            updateMiniChart(stock);
+        }
+
+        private void updateMiniChart(Stock stock) {
+            // Generate sparkline data (simulated trend based on current price)
+            List<Entry> entries = generateSparklineData(
+                    stock.getCurrentPrice(),
+                    stock.getChangePercent()
+            );
+
+            // Update chart
+            ChartHelper.updateMiniChart(
+                    miniChart,
+                    entries,
+                    stock.getChangePercent(),
+                    itemView.getContext()
+            );
+        }
+
+        /**
+         * Generates simulated sparkline data for mini chart.
+         * Creates a realistic price trend based on current price and change percent.
+         */
+        private List<Entry> generateSparklineData(double currentPrice, double changePercent) {
+            List<Entry> entries = new ArrayList<>();
+            Random random = new Random(System.currentTimeMillis());
+
+            int dataPoints = 20; // Number of points in sparkline
+            double startPrice = currentPrice / (1 + (changePercent / 100));
+
+            for (int i = 0; i < dataPoints; i++) {
+                // Generate smooth progression from start to current price
+                double progress = (double) i / (dataPoints - 1);
+                double price = startPrice + (currentPrice - startPrice) * progress;
+
+                // Add small random variation for realistic look (±0.5%)
+                double variation = 1 + (random.nextDouble() - 0.5) * 0.01;
+                price *= variation;
+
+                entries.add(new Entry(i, (float) price));
+            }
+
+            return entries;
         }
     }
 }

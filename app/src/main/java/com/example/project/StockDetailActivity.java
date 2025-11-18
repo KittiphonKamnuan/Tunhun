@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,9 +12,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.project.dialog.BuyStockDialog;
 import com.example.project.model.CandleData;
 import com.example.project.model.StockQuote;
 import com.example.project.model.TimeFrame;
+import com.example.project.repository.PortfolioRepository;
 import com.example.project.service.FinnhubApiService;
 import com.example.project.util.ChartHelper;
 import com.example.project.util.PriceDataGenerator;
@@ -23,7 +24,9 @@ import com.example.project.util.StockColorHelper;
 import com.example.project.viewmodel.StockViewModel;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -51,7 +54,9 @@ public class StockDetailActivity extends AppCompatActivity {
     private ChipGroup chipGroupTimeframe;
     private ProgressBar chartLoading;
     private TextView chartErrorText;
-    private ImageButton btnBack;
+    private FloatingActionButton btnBack;
+    private MaterialButton btnBuy;
+    private MaterialButton btnAddWatchlist;
 
     // Stock Information TextViews
     private TextView textOpenPrice;
@@ -68,6 +73,7 @@ public class StockDetailActivity extends AppCompatActivity {
     // Services and handlers
     private StockViewModel viewModel;
     private FinnhubApiService apiService;
+    private PortfolioRepository portfolioRepository;
     private Handler refreshHandler;
     private Runnable refreshRunnable;
 
@@ -83,9 +89,11 @@ public class StockDetailActivity extends AppCompatActivity {
         initializeViews();
         setupViewModel();
         setupApiService();
+        setupPortfolioRepository();
 
-        // ✅ แก้: เพิ่ม listener สำหรับปุ่ม back
+        // ✅ แก้: เพิ่ม listener สำหรับปุ่ม back และ buy/watchlist
         setupBackButton();
+        setupButtons();
 
         // Fetch quote data เสมอเพื่อให้ได้ข้อมูล Open, High, Low, Prev Close
         fetchQuoteData();
@@ -125,6 +133,8 @@ public class StockDetailActivity extends AppCompatActivity {
         chartLoading = findViewById(R.id.chart_loading);
         chartErrorText = findViewById(R.id.chart_error_text);
         btnBack = findViewById(R.id.btn_back);
+        btnBuy = findViewById(R.id.btn_buy);
+        btnAddWatchlist = findViewById(R.id.btn_add_watchlist);
 
         // ✅ แก้: เพิ่ม TextView สำหรับ Stock Information
         textOpenPrice = findViewById(R.id.text_open_price);
@@ -148,10 +158,50 @@ public class StockDetailActivity extends AppCompatActivity {
     }
 
     /**
+     * Sets up the portfolio repository.
+     */
+    private void setupPortfolioRepository() {
+        portfolioRepository = PortfolioRepository.getInstance(this);
+    }
+
+    /**
      * ✅ แก้: เพิ่ม method สำหรับปุ่ม back
      */
     private void setupBackButton() {
         btnBack.setOnClickListener(v -> finish());
+    }
+
+    /**
+     * ✅ แก้: เพิ่ม method สำหรับปุ่ม Buy และ Add Watchlist
+     */
+    private void setupButtons() {
+        // Buy button - Show buy dialog
+        btnBuy.setOnClickListener(v -> showBuyDialog());
+
+        // Add to Watchlist button
+        btnAddWatchlist.setOnClickListener(v -> {
+            viewModel.addStock(symbol);
+            Toast.makeText(this, "เพิ่ม " + symbol + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    /**
+     * Show buy stock dialog
+     */
+    private void showBuyDialog() {
+        if (price <= 0) {
+            Toast.makeText(this, "กรุณารอโหลดราคาหุ้น", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        double availableBalance = portfolioRepository.getCurrentBalance();
+
+        BuyStockDialog dialog = BuyStockDialog.newInstance(symbol, price, availableBalance);
+        dialog.setOnBuyConfirmedListener((symbol, shares, totalCost) -> {
+            // Refresh UI after purchase
+            Toast.makeText(this, "ตรวจสอบพอร์ตได้ที่แท็บ Portfolio", Toast.LENGTH_LONG).show();
+        });
+        dialog.show(getSupportFragmentManager(), "BuyStockDialog");
     }
 
     /**
@@ -208,14 +258,14 @@ public class StockDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * ✅ แก้: เพิ่ม method สำหรับแสดง Stock Information
+     * ✅ แก้: เพิ่ม method สำหรับแสดง Stock Information (ไม่มี $ เพื่อให้ดูสะอาด)
      */
     private void displayStockInformation() {
         if (latestQuote != null) {
-            textOpenPrice.setText(String.format("$%.2f", latestQuote.getOpenPrice()));
-            textHighPrice.setText(String.format("$%.2f", latestQuote.getHighPrice()));
-            textLowPrice.setText(String.format("$%.2f", latestQuote.getLowPrice()));
-            textPrevClose.setText(String.format("$%.2f", latestQuote.getPreviousClose()));
+            textOpenPrice.setText(String.format("%.2f", latestQuote.getOpenPrice()));
+            textHighPrice.setText(String.format("%.2f", latestQuote.getHighPrice()));
+            textLowPrice.setText(String.format("%.2f", latestQuote.getLowPrice()));
+            textPrevClose.setText(String.format("%.2f", latestQuote.getPreviousClose()));
         } else {
             textOpenPrice.setText("--");
             textHighPrice.setText("--");

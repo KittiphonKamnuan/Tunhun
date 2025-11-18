@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.project.BuildConfig;
 import com.example.project.model.CandleData;
+import com.example.project.model.MarketStatus;
 import com.example.project.model.StockQuote;
 import com.example.project.model.TimeFrame;
 import com.google.gson.Gson;
@@ -26,6 +27,7 @@ public class FinnhubApiService {
     private static final String TAG = "FinnhubApiService";
     private static final String CANDLE_ENDPOINT = "https://finnhub.io/api/v1/stock/candle";
     private static final String QUOTE_ENDPOINT = "https://finnhub.io/api/v1/quote";
+    private static final String MARKET_STATUS_ENDPOINT = "https://finnhub.io/api/v1/stock/market-status";
     private static final int TIMEOUT_SECONDS = 30;
 
     private final OkHttpClient httpClient;
@@ -60,6 +62,25 @@ public class FinnhubApiService {
          * @param quote The fetched stock quote
          */
         void onSuccess(StockQuote quote);
+
+        /**
+         * Called when an error occurs during fetching.
+         *
+         * @param error Error message
+         */
+        void onError(String error);
+    }
+
+    /**
+     * Callback interface for market status fetching.
+     */
+    public interface MarketStatusCallback {
+        /**
+         * Called when market status is successfully fetched.
+         *
+         * @param status The fetched market status
+         */
+        void onSuccess(MarketStatus status);
 
         /**
          * Called when an error occurs during fetching.
@@ -235,6 +256,69 @@ public class FinnhubApiService {
     private String buildQuoteUrl(String symbol) {
         return QUOTE_ENDPOINT +
                 "?symbol=" + symbol +
+                "&token=" + BuildConfig.FINNHUB_API_KEY;
+    }
+
+    /**
+     * Fetches current market status for specified exchange.
+     *
+     * @param exchange Exchange code (e.g., "US")
+     * @param callback Callback for handling response
+     */
+    public void fetchMarketStatus(String exchange, MarketStatusCallback callback) {
+        String url = buildMarketStatusUrl(exchange);
+        Log.d(TAG, "Fetching market status from: " + url);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Failed to fetch market status", e);
+                callback.onError("Network error: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Unsuccessful response: " + response.code());
+                    callback.onError("HTTP error: " + response.code());
+                    return;
+                }
+
+                try {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Received market status: " + responseBody);
+
+                    MarketStatus status = gson.fromJson(responseBody, MarketStatus.class);
+
+                    if (status != null) {
+                        callback.onSuccess(status);
+                    } else {
+                        String errorMsg = "Invalid market status data";
+                        Log.w(TAG, errorMsg);
+                        callback.onError(errorMsg);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error parsing market status", e);
+                    callback.onError("Parsing error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    /**
+     * Builds the complete URL for market status API request.
+     *
+     * @param exchange Exchange code
+     * @return Complete API URL
+     */
+    private String buildMarketStatusUrl(String exchange) {
+        return MARKET_STATUS_ENDPOINT +
+                "?exchange=" + exchange +
                 "&token=" + BuildConfig.FINNHUB_API_KEY;
     }
 

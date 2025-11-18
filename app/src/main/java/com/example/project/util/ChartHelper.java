@@ -183,4 +183,83 @@ public class ChartHelper {
         configureXAxis(chart, context);
         configureYAxes(chart, context);
     }
+
+    /**
+     * Configures a mini sparkline chart for dashboard cards.
+     * Minimal styling with no axes, labels, or grid lines.
+     *
+     * @param chart   The LineChart to configure as sparkline
+     */
+    public static void configureMiniChart(LineChart chart) {
+        // Disable all interactions
+        chart.setTouchEnabled(false);
+        chart.setDragEnabled(false);
+        chart.setScaleEnabled(false);
+        chart.setPinchZoom(false);
+
+        // Disable all visual elements except the line
+        chart.getDescription().setEnabled(false);
+        chart.getLegend().setEnabled(false);
+        chart.setDrawGridBackground(false);
+
+        // Disable axes
+        chart.getXAxis().setEnabled(false);
+        chart.getAxisLeft().setEnabled(false);
+        chart.getAxisRight().setEnabled(false);
+
+        // Remove borders
+        chart.setDrawBorders(false);
+
+        // Set minimal view offsets
+        chart.setViewPortOffsets(0f, 0f, 0f, 0f);
+    }
+
+    /**
+     * Creates a minimal sparkline dataset.
+     *
+     * @param entries List of data entries
+     * @param color   Line color
+     * @return Configured LineDataSet for sparkline
+     */
+    public static LineDataSet createSparklineDataSet(List<Entry> entries, int color) {
+        LineDataSet dataSet = new LineDataSet(entries, "");
+
+        // Line styling
+        dataSet.setColor(color);
+        dataSet.setLineWidth(2f);
+        dataSet.setDrawCircles(false);
+        dataSet.setDrawValues(false);
+        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+
+        // No fill for sparkline (cleaner look)
+        dataSet.setDrawFilled(false);
+
+        return dataSet;
+    }
+
+    /**
+     * Updates mini sparkline chart with data.
+     *
+     * @param chart         The mini LineChart to update
+     * @param entries       Data entries
+     * @param changePercent Stock change percentage (for color)
+     * @param context       Android context
+     */
+    public static void updateMiniChart(
+            LineChart chart,
+            List<Entry> entries,
+            double changePercent,
+            Context context) {
+
+        // Get appropriate color based on price change
+        int color = StockColorHelper.getStockColor(context, changePercent);
+
+        // Create sparkline dataset
+        LineDataSet dataSet = createSparklineDataSet(entries, color);
+
+        // Set data and refresh
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        chart.invalidate();
+    }
 }

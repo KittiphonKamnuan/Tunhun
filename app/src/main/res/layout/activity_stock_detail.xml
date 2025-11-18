@@ -381,14 +381,55 @@
     </androidx.core.widget.NestedScrollView>
 
     <!-- Back Button -->
-    <ImageButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_back"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_margin="8dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:tint="@color/text_primary"
-        android:contentDescription="Back" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_menu_revert"
+        android:contentDescription="Back"
+        app:fabSize="normal"
+        app:backgroundTint="@android:color/white"
+        app:tint="@color/text_primary"
+        app:elevation="6dp" />
+
+    <!-- Buy/Sell Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@android:color/white"
+        android:elevation="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_buy"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="ซื้อ"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/dimePurple"
+            app:cornerRadius="12dp"
+            android:textColor="@android:color/white" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_watchlist"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="เพิ่ม Watchlist"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/surface"
+            app:cornerRadius="12dp"
+            android:textColor="@color/dimePurple"
+            app:strokeColor="@color/dimePurple"
+            app:strokeWidth="2dp" />
+    </LinearLayout>
 
 </FrameLayout>

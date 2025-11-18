@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.project.fragment.DashboardFragment;
 import com.example.project.fragment.WatchlistFragment;
+import com.example.project.fragment.SearchFragment;
+import com.example.project.fragment.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigation = findViewById(R.id.bottom_navigation);
 
-        // Set default fragment
+        // Set default fragment (Home)
         if (savedInstanceState == null) {
             loadFragment(new DashboardFragment());
         }
@@ -30,13 +32,18 @@ public class MainActivity extends AppCompatActivity {
             Fragment fragment = null;
 
             int itemId = item.getItemId();
-            if (itemId == R.id.navigation_dashboard) {
+            if (itemId == R.id.navigation_home) {
+                // Home tab shows Dashboard
                 fragment = new DashboardFragment();
-            } else if (itemId == R.id.navigation_watchlist) {
+            } else if (itemId == R.id.navigation_portfolio) {
+                // Portfolio tab shows Watchlist
                 fragment = new WatchlistFragment();
-            } else if (itemId == R.id.navigation_settings) {
-                startActivity(new android.content.Intent(MainActivity.this, SettingsActivity.class));
-                return true;
+            } else if (itemId == R.id.navigation_search) {
+                // Search tab
+                fragment = new SearchFragment();
+            } else if (itemId == R.id.navigation_profile) {
+                // Profile tab
+                fragment = new ProfileFragment();
             }
 
             return loadFragment(fragment);

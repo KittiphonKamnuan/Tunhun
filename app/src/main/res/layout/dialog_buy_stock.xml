@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@android:color/white">
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ซื้อหุ้น"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Stock Symbol -->
+    <TextView
+        android:id="@+id/text_dialog_symbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AAPL"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/dimePurple"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Current Price -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="ราคาปัจจุบัน:"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary" />
+
+        <TextView
+            android:id="@+id/text_dialog_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$182.45"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+    </LinearLayout>
+
+    <!-- Available Balance -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="เงินคงเหลือ:"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary" />
+
+        <TextView
+            android:id="@+id/text_dialog_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$100,000.00"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/dimeGreen" />
+    </LinearLayout>
+
+    <!-- Shares Input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="จำนวนหุ้น:"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="8dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusBottomEnd="12dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_shares"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="ใส่จำนวนหุ้น"
+            android:inputType="numberDecimal"
+            android:textSize="16sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Total Cost -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/surface"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="ยอดรวม:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/text_total_cost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$0.00"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/dimePurple" />
+    </LinearLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:text="ยกเลิก"
+            android:textSize="16sp"
+            android:layout_marginEnd="12dp"
+            app:backgroundTint="@color/surface"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp"
+            android:textColor="@color/text_primary"
+            app:cornerRadius="12dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_confirm_buy"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:text="ยืนยันการซื้อ"
+            android:textSize="16sp"
+            app:backgroundTint="@color/dimePurple"
+            android:textColor="@android:color/white"
+            app:cornerRadius="12dp" />
+    </LinearLayout>
+
+</LinearLayout>

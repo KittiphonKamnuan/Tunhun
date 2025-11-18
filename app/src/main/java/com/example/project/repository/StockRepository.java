@@ -9,7 +9,6 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.project.mock.MockStockDataProvider;
 import com.example.project.model.Stock;
 import com.example.project.model.TradeMessage;
 import com.example.project.service.FinnhubWebSocketClient;
@@ -30,14 +29,10 @@ public class StockRepository {
     private static final String PREFS_NAME = "stock_watchlist_prefs";
     private static final String KEY_WATCHLIST = "watchlist";
 
-    // Set to true to use mock data (no API key needed)
-    private static final boolean USE_MOCK_DATA = false;
-
     private static StockRepository instance;
     private final SharedPreferences sharedPreferences;
     private final Gson gson;
     private final FinnhubWebSocketClient webSocketClient;
-    private final MockStockDataProvider mockDataProvider;
     private final Handler mainHandler;
 
     private final Map<String, Stock> stockMap;
@@ -48,17 +43,12 @@ public class StockRepository {
         this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
         this.webSocketClient = new FinnhubWebSocketClient();
-        this.mockDataProvider = new MockStockDataProvider();
         this.mainHandler = new Handler(Looper.getMainLooper());
         this.stockMap = new HashMap<>();
         this.stockListLiveData = new MutableLiveData<>(new ArrayList<>());
         this.connectionStatusLiveData = new MutableLiveData<>(false);
 
-        if (USE_MOCK_DATA) {
-            setupMockDataProvider();
-        } else {
-            setupWebSocketListener();
-        }
+        setupWebSocketListener();
         loadWatchlistFromPreferences();
     }
 
@@ -67,22 +57,6 @@ public class StockRepository {
             instance = new StockRepository(context.getApplicationContext());
         }
         return instance;
-    }
-
-    private void setupMockDataProvider() {
-        mockDataProvider.setStockUpdateListener((symbol, price, changePercent) -> {
-            Stock stock = stockMap.get(symbol);
-            if (stock != null) {
-                // Set opening price from first update if not set
-                if (stock.getOpeningPrice() == 0 && price > 0) {
-                    stock.setOpeningPrice(price);
-                }
-                stock.setCurrentPrice(price);
-                // Calculate from opening price instead of using provided changePercent
-                stock.calculateChangePercentFromOpening();
-                notifyStockListChanged();
-            }
-        });
     }
 
     private void setupWebSocketListener() {
@@ -146,23 +120,11 @@ public class StockRepository {
     }
 
     public void connect() {
-        if (USE_MOCK_DATA) {
-            mockDataProvider.start();
-            connectionStatusLiveData.setValue(true);
-            Log.d(TAG, "Mock data provider started");
-        } else {
-            webSocketClient.connect();
-        }
+        webSocketClient.connect();
     }
 
     public void disconnect() {
-        if (USE_MOCK_DATA) {
-            mockDataProvider.stop();
-            connectionStatusLiveData.setValue(false);
-            Log.d(TAG, "Mock data provider stopped");
-        } else {
-            webSocketClient.disconnect();
-        }
+        webSocketClient.disconnect();
     }
 
     public void addStock(String symbol) {
@@ -178,16 +140,10 @@ public class StockRepository {
             return;
         }
 
-        Stock stock;
-        if (USE_MOCK_DATA) {
-            stock = mockDataProvider.getInitialStockData(upperSymbol);
-        } else {
-            stock = new Stock(upperSymbol);
-        }
-
+        Stock stock = new Stock(upperSymbol);
         stockMap.put(upperSymbol, stock);
 
-        if (!USE_MOCK_DATA && webSocketClient.isConnected()) {
+        if (webSocketClient.isConnected()) {
             webSocketClient.subscribe(upperSymbol);
         }
 
@@ -205,7 +161,7 @@ public class StockRepository {
         Stock removed = stockMap.remove(upperSymbol);
 
         if (removed != null) {
-            if (!USE_MOCK_DATA && webSocketClient.isConnected()) {
+            if (webSocketClient.isConnected()) {
                 webSocketClient.unsubscribe(upperSymbol);
             }
 
@@ -249,12 +205,7 @@ public class StockRepository {
 
                 if (symbols != null) {
                     for (String symbol : symbols) {
-                        Stock stock;
-                        if (USE_MOCK_DATA) {
-                            stock = mockDataProvider.getInitialStockData(symbol);
-                        } else {
-                            stock = new Stock(symbol);
-                        }
+                        Stock stock = new Stock(symbol);
                         stockMap.put(symbol, stock);
                     }
                     notifyStockListChanged();
@@ -275,20 +226,6 @@ public class StockRepository {
     }
 
     public boolean isConnected() {
-        if (USE_MOCK_DATA) {
-            return connectionStatusLiveData.getValue() != null && connectionStatusLiveData.getValue();
-        }
         return webSocketClient.isConnected();
-    }
-
-    public boolean isUsingMockData() {
-        return USE_MOCK_DATA;
-    }
-
-    public List<String> getSuggestedStocks() {
-        if (USE_MOCK_DATA) {
-            return mockDataProvider.getSuggestedSymbols();
-        }
-        return new ArrayList<>();
     }
 }

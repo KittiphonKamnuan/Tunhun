@@ -49,6 +49,14 @@
                 tools:text="Apple Inc." />
         </LinearLayout>
 
+        <!-- Mini Sparkline Chart -->
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/mini_chart"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp" />
+
         <!-- Price Info -->
         <LinearLayout
             android:layout_width="wrap_content"

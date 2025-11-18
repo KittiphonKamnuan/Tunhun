@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.project.R;
 import com.example.project.StockDetailActivity;
 import com.example.project.adapter.StockDashboardAdapter;
+import com.example.project.model.MarketStatus;
 import com.example.project.model.Stock;
+import com.example.project.service.FinnhubApiService;
 import com.example.project.viewmodel.StockViewModel;
 
 import java.util.Arrays;
@@ -27,14 +30,22 @@ import java.util.List;
 public class DashboardFragment extends Fragment {
 
     private StockViewModel viewModel;
+    private FinnhubApiService apiService;
     private StockDashboardAdapter trendingAdapter;
     private StockDashboardAdapter popularAdapter;
     private RecyclerView recyclerTrending;
     private RecyclerView recyclerPopular;
     private View searchBar;
 
+    // Market Status Views
+    private TextView marketEmojiText;
+    private TextView marketStatusText;
+    private TextView marketSessionText;
+
     private Handler refreshHandler;
     private Runnable refreshRunnable;
+    private Handler marketStatusRefreshHandler;
+    private Runnable marketStatusRefreshRunnable;
 
     // Predefined popular stocks
     private static final List<String> TRENDING_STOCKS = Arrays.asList("AAPL", "TSLA", "GOOGL", "MSFT");
@@ -54,7 +65,9 @@ public class DashboardFragment extends Fragment {
         setupViewModel();
         setupRecyclerViews();
         loadStocks();
+        loadMarketStatus();
         startAutoRefresh();
+        startMarketStatusRefresh();
     }
 
     private void initViews(View view) {
@@ -62,12 +75,18 @@ public class DashboardFragment extends Fragment {
         recyclerPopular = view.findViewById(R.id.recycler_popular);
         searchBar = view.findViewById(R.id.search_bar);
 
+        // Market Status Views
+        marketEmojiText = view.findViewById(R.id.text_market_emoji);
+        marketStatusText = view.findViewById(R.id.text_market_status);
+        marketSessionText = view.findViewById(R.id.text_market_session);
+
         // Set search bar click listener
         searchBar.setOnClickListener(v -> openSearchActivity());
     }
 
     private void setupViewModel() {
         viewModel = new ViewModelProvider(requireActivity()).get(StockViewModel.class);
+        apiService = new FinnhubApiService();
     }
 
     private void setupRecyclerViews() {
@@ -148,12 +167,77 @@ public class DashboardFragment extends Fragment {
         refreshHandler.post(refreshRunnable);
     }
 
+    /**
+     * Loads current market status from Finnhub API
+     */
+    private void loadMarketStatus() {
+        apiService.fetchMarketStatus("US", new FinnhubApiService.MarketStatusCallback() {
+            @Override
+            public void onSuccess(MarketStatus status) {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> updateMarketStatusUI(status));
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        // Show default status on error
+                        marketEmojiText.setText("⚪");
+                        marketStatusText.setText("Market Status");
+                        marketSessionText.setText("Loading...");
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * Updates market status UI with fetched data
+     */
+    private void updateMarketStatusUI(MarketStatus status) {
+        // Set emoji (🟢 for open, 🔴 for closed)
+        marketEmojiText.setText(status.getStatusEmoji());
+
+        // Set status text
+        String statusText = "US " + status.getStatusText();
+        marketStatusText.setText(statusText);
+
+        // Set session text
+        marketSessionText.setText(status.getSessionText());
+    }
+
+    /**
+     * Starts auto-refresh for market status (every 60 seconds)
+     */
+    private void startMarketStatusRefresh() {
+        marketStatusRefreshHandler = new Handler(Looper.getMainLooper());
+        marketStatusRefreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                loadMarketStatus();
+                // Refresh every 60 seconds
+                marketStatusRefreshHandler.postDelayed(this, 60000);
+            }
+        };
+        marketStatusRefreshHandler.post(marketStatusRefreshRunnable);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         // Stop auto-refresh
         if (refreshHandler != null && refreshRunnable != null) {
             refreshHandler.removeCallbacks(refreshRunnable);
+        }
+        // Stop market status refresh
+        if (marketStatusRefreshHandler != null && marketStatusRefreshRunnable != null) {
+            marketStatusRefreshHandler.removeCallbacks(marketStatusRefreshRunnable);
+        }
+        // Cancel API requests
+        if (apiService != null) {
+            apiService.cancelAllRequests();
         }
     }
 }
