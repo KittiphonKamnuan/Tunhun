@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
 
     <!-- Toolbar with Search -->
     <com.google.android.material.appbar.AppBarLayout
@@ -16,11 +17,14 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingStart="4dp"
             android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:background="@color/background">
 
             <!-- Back Button -->
@@ -33,13 +37,13 @@
                 android:contentDescription="Back"
                 android:clickable="true"
                 android:focusable="true"
-                android:tint="@color/text_primary" />
+                app:tint="@color/text_primary" />
 
             <!-- Search Input -->
             <EditText
                 android:id="@+id/edit_search"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="48dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:hint="Search stocks (e.g., AAPL, TSLA)"
@@ -49,7 +53,8 @@
                 android:paddingHorizontal="12dp"
                 android:imeOptions="actionSearch"
                 android:inputType="textCapCharacters"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:gravity="center_vertical" />
         </LinearLayout>
 
         <!-- Divider -->
@@ -75,126 +80,132 @@
             tools:listitem="@layout/item_stock_dashboard" />
 
         <!-- Popular Suggestions -->
-        <LinearLayout
-            android:id="@+id/layout_suggestions"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:fillViewport="true">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Popular Searches"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Popular Stock Chips -->
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_popular"
+            <LinearLayout
+                android:id="@+id/layout_suggestions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:singleLine="false">
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_aapl"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="AAPL - Apple"
+                    android:text="Popular Searches"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
                     android:textColor="@color/text_primary"
-                    app:chipBackgroundColor="@color/surface"
-                    app:chipStrokeColor="@color/border"
-                    app:chipStrokeWidth="1dp"
-                    style="@style/Widget.MaterialComponents.Chip.Action" />
+                    android:layout_marginBottom="16dp" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_tsla"
+                <!-- Popular Stock Chips -->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_popular"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:singleLine="false">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_aapl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AAPL - Apple"
+                        android:textColor="@color/text_primary"
+                        app:chipBackgroundColor="@color/surface"
+                        app:chipStrokeColor="@color/border"
+                        app:chipStrokeWidth="1dp"
+                        style="@style/Widget.MaterialComponents.Chip.Action" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_tsla"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TSLA - Tesla"
+                        android:textColor="@color/text_primary"
+                        app:chipBackgroundColor="@color/surface"
+                        app:chipStrokeColor="@color/border"
+                        app:chipStrokeWidth="1dp"
+                        style="@style/Widget.MaterialComponents.Chip.Action" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_googl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GOOGL - Google"
+                        android:textColor="@color/text_primary"
+                        app:chipBackgroundColor="@color/surface"
+                        app:chipStrokeColor="@color/border"
+                        app:chipStrokeWidth="1dp"
+                        style="@style/Widget.MaterialComponents.Chip.Action" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_msft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MSFT - Microsoft"
+                        android:textColor="@color/text_primary"
+                        app:chipBackgroundColor="@color/surface"
+                        app:chipStrokeColor="@color/border"
+                        app:chipStrokeWidth="1dp"
+                        style="@style/Widget.MaterialComponents.Chip.Action" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_amzn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AMZN - Amazon"
+                        android:textColor="@color/text_primary"
+                        app:chipBackgroundColor="@color/surface"
+                        app:chipStrokeColor="@color/border"
+                        app:chipStrokeWidth="1dp"
+                        style="@style/Widget.MaterialComponents.Chip.Action" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_meta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="META - Meta"
+                        android:textColor="@color/text_primary"
+                        app:chipBackgroundColor="@color/surface"
+                        app:chipStrokeColor="@color/border"
+                        app:chipStrokeWidth="1dp"
+                        style="@style/Widget.MaterialComponents.Chip.Action" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_nvda"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="NVDA - NVIDIA"
+                        android:textColor="@color/text_primary"
+                        app:chipBackgroundColor="@color/surface"
+                        app:chipStrokeColor="@color/border"
+                        app:chipStrokeWidth="1dp"
+                        style="@style/Widget.MaterialComponents.Chip.Action" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_nflx"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="NFLX - Netflix"
+                        android:textColor="@color/text_primary"
+                        app:chipBackgroundColor="@color/surface"
+                        app:chipStrokeColor="@color/border"
+                        app:chipStrokeWidth="1dp"
+                        style="@style/Widget.MaterialComponents.Chip.Action" />
+                </com.google.android.material.chip.ChipGroup>
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TSLA - Tesla"
-                    android:textColor="@color/text_primary"
-                    app:chipBackgroundColor="@color/surface"
-                    app:chipStrokeColor="@color/border"
-                    app:chipStrokeWidth="1dp"
-                    style="@style/Widget.MaterialComponents.Chip.Action" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_googl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="GOOGL - Google"
-                    android:textColor="@color/text_primary"
-                    app:chipBackgroundColor="@color/surface"
-                    app:chipStrokeColor="@color/border"
-                    app:chipStrokeWidth="1dp"
-                    style="@style/Widget.MaterialComponents.Chip.Action" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_msft"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="MSFT - Microsoft"
-                    android:textColor="@color/text_primary"
-                    app:chipBackgroundColor="@color/surface"
-                    app:chipStrokeColor="@color/border"
-                    app:chipStrokeWidth="1dp"
-                    style="@style/Widget.MaterialComponents.Chip.Action" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_amzn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AMZN - Amazon"
-                    android:textColor="@color/text_primary"
-                    app:chipBackgroundColor="@color/surface"
-                    app:chipStrokeColor="@color/border"
-                    app:chipStrokeWidth="1dp"
-                    style="@style/Widget.MaterialComponents.Chip.Action" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_meta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="META - Meta"
-                    android:textColor="@color/text_primary"
-                    app:chipBackgroundColor="@color/surface"
-                    app:chipStrokeColor="@color/border"
-                    app:chipStrokeWidth="1dp"
-                    style="@style/Widget.MaterialComponents.Chip.Action" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_nvda"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="NVDA - NVIDIA"
-                    android:textColor="@color/text_primary"
-                    app:chipBackgroundColor="@color/surface"
-                    app:chipStrokeColor="@color/border"
-                    app:chipStrokeWidth="1dp"
-                    style="@style/Widget.MaterialComponents.Chip.Action" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_nflx"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="NFLX - Netflix"
-                    android:textColor="@color/text_primary"
-                    app:chipBackgroundColor="@color/surface"
-                    app:chipStrokeColor="@color/border"
-                    app:chipStrokeWidth="1dp"
-                    style="@style/Widget.MaterialComponents.Chip.Action" />
-            </com.google.android.material.chip.ChipGroup>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Enter a stock symbol to search"
-                android:textSize="14sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginTop="24dp" />
-        </LinearLayout>
+                    android:text="Enter a stock symbol to search"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="24dp" />
+            </LinearLayout>
+        </ScrollView>
 
         <!-- Empty State -->
         <LinearLayout

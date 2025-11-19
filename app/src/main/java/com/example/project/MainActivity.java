@@ -33,16 +33,12 @@ public class MainActivity extends AppCompatActivity {
 
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_home) {
-                // Home tab shows Dashboard
                 fragment = new DashboardFragment();
             } else if (itemId == R.id.navigation_portfolio) {
-                // Portfolio tab shows Watchlist
                 fragment = new WatchlistFragment();
             } else if (itemId == R.id.navigation_search) {
-                // Search tab
                 fragment = new SearchFragment();
             } else if (itemId == R.id.navigation_profile) {
-                // Profile tab
                 fragment = new ProfileFragment();
             }
 
@@ -59,5 +55,15 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Navigate to Watchlist tab (Portfolio/Watchlist)
+     */
+    public void navigateToWatchlist() {
+        if (bottomNavigation != null) {
+            // เปลี่ยนเป็น id ของแท็บ Watchlist ของคุณ
+            bottomNavigation.setSelectedItemId(R.id.navigation_portfolio);
+        }
     }
 }

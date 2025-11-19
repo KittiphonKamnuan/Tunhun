@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,8 +17,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.project.MainActivity;
 import com.example.project.R;
 import com.example.project.StockDetailActivity;
+import com.example.project.adapter.StockAdapter;
 import com.example.project.adapter.StockDashboardAdapter;
 import com.example.project.model.MarketStatus;
 import com.example.project.model.Stock;
@@ -26,16 +29,26 @@ import com.example.project.viewmodel.StockViewModel;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DashboardFragment extends Fragment {
 
     private StockViewModel viewModel;
     private FinnhubApiService apiService;
+
+    // ✅ แก้: เพิ่ม adapter สำหรับ watchlist
+    private StockAdapter watchlistAdapter;
     private StockDashboardAdapter trendingAdapter;
     private StockDashboardAdapter popularAdapter;
+
+    private RecyclerView recyclerWatchlist;
     private RecyclerView recyclerTrending;
     private RecyclerView recyclerPopular;
     private View searchBar;
+
+    // ✅ แก้: เพิ่ม views สำหรับ watchlist section
+    private View watchlistSection;
+    private TextView textViewAllWatchlist;
 
     // Market Status Views
     private TextView marketEmojiText;
@@ -71,6 +84,11 @@ public class DashboardFragment extends Fragment {
     }
 
     private void initViews(View view) {
+        // ✅ แก้: เพิ่ม watchlist views
+        watchlistSection = view.findViewById(R.id.watchlist_section);
+        recyclerWatchlist = view.findViewById(R.id.recycler_watchlist);
+        textViewAllWatchlist = view.findViewById(R.id.text_view_all_watchlist);
+
         recyclerTrending = view.findViewById(R.id.recycler_trending);
         recyclerPopular = view.findViewById(R.id.recycler_popular);
         searchBar = view.findViewById(R.id.search_bar);
@@ -82,6 +100,16 @@ public class DashboardFragment extends Fragment {
 
         // Set search bar click listener
         searchBar.setOnClickListener(v -> openSearchActivity());
+
+        // ✅ แก้: Set View All Watchlist click listener
+        if (textViewAllWatchlist != null) {
+            textViewAllWatchlist.setOnClickListener(v -> {
+                // นำทางไปหน้า Watchlist (tab ที่ 2)
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).navigateToWatchlist();
+                }
+            });
+        }
     }
 
     private void setupViewModel() {
@@ -90,6 +118,20 @@ public class DashboardFragment extends Fragment {
     }
 
     private void setupRecyclerViews() {
+        // ✅ แก้: Setup Watchlist RecyclerView
+        watchlistAdapter = new StockAdapter();
+        recyclerWatchlist.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerWatchlist.setAdapter(watchlistAdapter);
+
+        // ✅ แก้: Handle watchlist item click
+        watchlistAdapter.setOnStockClickListener(this::openStockDetail);
+
+        // ✅ แก้: Handle watchlist item remove
+        watchlistAdapter.setOnStockRemoveListener(stock -> {
+            viewModel.removeStock(stock.getSymbol());
+            Toast.makeText(getContext(), "ลบ " + stock.getSymbol() + " ออกจาก Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+        });
+
         // Trending stocks
         trendingAdapter = new StockDashboardAdapter();
         recyclerTrending.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -122,6 +164,20 @@ public class DashboardFragment extends Fragment {
         // Observe stock updates
         viewModel.getStockList().observe(getViewLifecycleOwner(), stocks -> {
             if (stocks != null) {
+                // ✅ แก้: แยก watchlist stocks ออกมา (หุ้นที่ไม่ใช่ trending/popular)
+                List<Stock> watchlistStocks = stocks.stream()
+                        .filter(stock -> !TRENDING_STOCKS.contains(stock.getSymbol())
+                                && !POPULAR_STOCKS.contains(stock.getSymbol()))
+                        .collect(Collectors.toList());
+
+                // ✅ แก้: แสดง/ซ่อน watchlist section
+                if (watchlistStocks.isEmpty()) {
+                    watchlistSection.setVisibility(View.GONE);
+                } else {
+                    watchlistSection.setVisibility(View.VISIBLE);
+                    watchlistAdapter.setStockList(watchlistStocks);
+                }
+
                 // Filter and update adapters
                 trendingAdapter.setStocks(filterStocks(stocks, TRENDING_STOCKS));
                 popularAdapter.setStocks(filterStocks(stocks, POPULAR_STOCKS));
@@ -132,7 +188,7 @@ public class DashboardFragment extends Fragment {
     private List<Stock> filterStocks(List<Stock> allStocks, List<String> symbols) {
         return allStocks.stream()
                 .filter(stock -> symbols.contains(stock.getSymbol()))
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     private void openStockDetail(Stock stock) {
@@ -167,9 +223,6 @@ public class DashboardFragment extends Fragment {
         refreshHandler.post(refreshRunnable);
     }
 
-    /**
-     * Loads current market status from Finnhub API
-     */
     private void loadMarketStatus() {
         apiService.fetchMarketStatus("US", new FinnhubApiService.MarketStatusCallback() {
             @Override
@@ -183,10 +236,7 @@ public class DashboardFragment extends Fragment {
             public void onError(String error) {
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
-                        // Show default status on error (Using Resources now)
                         marketEmojiText.setText("⚪");
-
-                        // [FIX] ใช้ getString(R.string...) แทนการพิมพ์ข้อความตรงๆ
                         marketStatusText.setText(R.string.market_status_label);
                         marketSessionText.setText("Loading...");
                     });
@@ -195,11 +245,7 @@ public class DashboardFragment extends Fragment {
         });
     }
 
-    /**
-     * Updates market status UI with fetched data
-     */
     private void updateMarketStatusUI(MarketStatus status) {
-        // 1. จัดการ Emoji และ สถานะ (Open/Closed)
         marketEmojiText.setText(status.getStatusEmoji());
 
         boolean isOpen = false;
@@ -213,44 +259,32 @@ public class DashboardFragment extends Fragment {
             marketStatusText.setText(R.string.market_status_closed);
         }
 
-        // 2. จัดการคำว่า "Market Hours" (Session Text) ให้เป็นภาษาไทย
-        String sessionRaw = status.getSessionText(); // ค่าที่ได้จาก API (เช่น "Regular Trading")
-
+        String sessionRaw = status.getSessionText();
         if (sessionRaw == null) {
             marketSessionText.setText("");
             return;
         }
 
-        // แปลงเป็นตัวพิมพ์เล็กเพื่อเช็คง่ายๆ
         String sessionLower = sessionRaw.toLowerCase();
-
         if (sessionLower.contains("regular")) {
-            // ถ้าเจอคำว่า Regular -> ใช้คำไทย "ตลาดซื้อขายปกติ"
             marketSessionText.setText(R.string.session_regular);
         } else if (sessionLower.contains("pre")) {
-            // ถ้าเจอคำว่า Pre -> ใช้คำไทย "ช่วงก่อนตลาดเปิด"
             marketSessionText.setText(R.string.session_pre);
         } else if (sessionLower.contains("post") || sessionLower.contains("after")) {
-            // ถ้าเจอคำว่า Post -> ใช้คำไทย "ช่วงหลังตลาดปิด"
             marketSessionText.setText(R.string.session_post);
         } else if (sessionLower.contains("close")) {
             marketSessionText.setText(R.string.session_closed);
         } else {
-            // ถ้าไม่ตรงกับเงื่อนไขบนเลย ให้แสดงตามเดิมไปก่อน (กรณี API ส่งคำแปลกๆ มา)
             marketSessionText.setText(sessionRaw);
         }
     }
 
-    /**
-     * Starts auto-refresh for market status (every 60 seconds)
-     */
     private void startMarketStatusRefresh() {
         marketStatusRefreshHandler = new Handler(Looper.getMainLooper());
         marketStatusRefreshRunnable = new Runnable() {
             @Override
             public void run() {
                 loadMarketStatus();
-                // Refresh every 60 seconds
                 marketStatusRefreshHandler.postDelayed(this, 60000);
             }
         };
@@ -260,15 +294,12 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // Stop auto-refresh
         if (refreshHandler != null && refreshRunnable != null) {
             refreshHandler.removeCallbacks(refreshRunnable);
         }
-        // Stop market status refresh
         if (marketStatusRefreshHandler != null && marketStatusRefreshRunnable != null) {
             marketStatusRefreshHandler.removeCallbacks(marketStatusRefreshRunnable);
         }
-        // Cancel API requests
         if (apiService != null) {
             apiService.cancelAllRequests();
         }

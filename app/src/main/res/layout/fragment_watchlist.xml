@@ -4,12 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="20dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="4dp"
         app:strokeWidth="0dp"
@@ -24,28 +28,28 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/balance_label"
-                android:textSize="14sp"
+                android:layout_marginBottom="4dp"
                 android:alpha="0.9"
+                android:text="@string/balance_label"
                 android:textColor="@android:color/white"
-                android:layout_marginBottom="4dp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/text_balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
                 android:text="$100,000.00"
-                android:textSize="32sp"
-                android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:layout_marginBottom="20dp" />
+                android:textSize="32sp"
+                android:textStyle="bold" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/white"
+                android:layout_marginBottom="16dp"
                 android:alpha="0.3"
-                android:layout_marginBottom="16dp" />
+                android:background="@android:color/white" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -61,46 +65,46 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/total_value_label"
-                        android:textSize="12sp"
                         android:alpha="0.8"
-                        android:textColor="@android:color/white" />
+                        android:text="@string/total_value_label"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/text_total_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="$0.00"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
                         android:textColor="@android:color/white"
-                        android:layout_marginTop="4dp" />
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="end">
+                    android:gravity="end"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/profit_loss_label"
-                        android:textSize="12sp"
                         android:alpha="0.8"
-                        android:textColor="@android:color/white" />
+                        android:text="@string/profit_loss_label"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/text_profit_loss"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="$0.00"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
                         android:textColor="@android:color/white"
-                        android:layout_marginTop="4dp" />
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

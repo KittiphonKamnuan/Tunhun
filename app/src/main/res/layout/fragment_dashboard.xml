@@ -169,7 +169,67 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 4. Trending Stocks Section -->
+        <!-- ✅ 4. Watchlist Section (NEW!) -->
+        <LinearLayout
+            android:id="@+id/watchlist_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Watchlist"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="-0.01"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="หุ้นที่คุณติดตาม"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/text_view_all_watchlist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/view_all"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/accentBlue"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_watchlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_stock" />
+        </LinearLayout>
+
+        <!-- 5. Trending Stocks Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -220,7 +280,7 @@
             android:nestedScrollingEnabled="false"
             tools:listitem="@layout/item_stock_dashboard" />
 
-        <!-- 5. Popular Stocks Section -->
+        <!-- 6. Popular Stocks Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -253,7 +313,7 @@
             android:nestedScrollingEnabled="false"
             tools:listitem="@layout/item_stock_dashboard" />
 
-        <!-- 6. NEW SECTION: Market News -->
+        <!-- 7. Market News -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

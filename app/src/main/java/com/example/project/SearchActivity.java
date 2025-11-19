@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,7 +37,6 @@ public class SearchActivity extends AppCompatActivity {
 
     private Chip chipAAPL, chipTSLA, chipGOOGL, chipMSFT, chipAMZN, chipMETA, chipNVDA, chipNFLX;
 
-    // ✅ แก้: เพิ่มรายการหุ้นยอดนิยมทั้งหมดที่ support
     private static final List<String> ALL_POPULAR_STOCKS = Arrays.asList(
             // Tech Giants
             "AAPL", "MSFT", "GOOGL", "GOOG", "AMZN", "META", "TSLA", "NVDA", "NFLX", "AMD",
@@ -127,11 +127,14 @@ public class SearchActivity extends AppCompatActivity {
         recyclerResults.setLayoutManager(new LinearLayoutManager(this));
         recyclerResults.setAdapter(resultsAdapter);
 
-        // Handle stock click
+        // ✅ แก้: Handle stock click - เพิ่มหุ้นเข้า watchlist และเปิดหน้ารายละเอียด
         resultsAdapter.setOnStockClickListener(stock -> {
-            // ✅ แก้: เพิ่มหุ้นเข้า watchlist ก่อนเปิดหน้ารายละเอียด
+            // เพิ่มหุ้นเข้า watchlist
             viewModel.addStock(stock.getSymbol());
-            openStockDetail(stock);
+            Toast.makeText(this, "เพิ่ม " + stock.getSymbol() + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+
+            // เปิดหน้ารายละเอียด
+            openStockDetail(stock.getSymbol());
         });
     }
 
@@ -165,7 +168,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     /**
-     * ✅ แก้: Search จากรายการหุ้นทั้งหมด ไม่ใช่แค่ใน watchlist
+     * ✅ แก้: Search จากรายการหุ้นทั้งหมด พร้อม observe ข้อมูลจริงจาก ViewModel
      */
     private void performSearch(String query) {
         if (query.isEmpty()) {
@@ -179,34 +182,44 @@ public class SearchActivity extends AppCompatActivity {
         // Hide suggestions
         layoutSuggestions.setVisibility(View.GONE);
 
-        // ✅ แก้: Search จาก ALL_POPULAR_STOCKS แทนการ search จาก watchlist
+        // Search จาก ALL_POPULAR_STOCKS
         String upperQuery = query.toUpperCase();
         List<String> matchedSymbols = ALL_POPULAR_STOCKS.stream()
                 .filter(symbol -> symbol.contains(upperQuery))
-                .limit(20) // จำกัดผลลัพธ์ไม่เกิน 20 รายการ
+                .limit(20)
                 .collect(Collectors.toList());
 
         if (matchedSymbols.isEmpty()) {
             // ถ้าไม่เจอในรายการ ให้แสดง symbol ที่พิมพ์เข้ามาเอง
             if (upperQuery.matches("[A-Z]+") && upperQuery.length() <= 5) {
-                Stock searchStock = new Stock(upperQuery);
-                resultsAdapter.setStocks(Arrays.asList(searchStock));
-                recyclerResults.setVisibility(View.VISIBLE);
-                emptyState.setVisibility(View.GONE);
+                matchedSymbols = Arrays.asList(upperQuery);
             } else {
                 recyclerResults.setVisibility(View.GONE);
                 emptyState.setVisibility(View.VISIBLE);
+                return;
             }
-        } else {
-            // แปลง symbol เป็น Stock objects
-            List<Stock> matchedStocks = matchedSymbols.stream()
-                    .map(Stock::new)
-                    .collect(Collectors.toList());
-
-            recyclerResults.setVisibility(View.VISIBLE);
-            emptyState.setVisibility(View.GONE);
-            resultsAdapter.setStocks(matchedStocks);
         }
+
+        // ✅ แก้: Subscribe หุ้นเหล่านี้เพื่อดึงข้อมูลจริง
+        for (String symbol : matchedSymbols) {
+            viewModel.addStock(symbol);
+        }
+
+        // ✅ แก้: Observe ข้อมูลจริงจาก ViewModel
+        List<String> finalMatchedSymbols = matchedSymbols;
+        viewModel.getStockList().observe(this, stocks -> {
+            if (stocks != null) {
+                List<Stock> matchedStocks = stocks.stream()
+                        .filter(stock -> finalMatchedSymbols.contains(stock.getSymbol()))
+                        .collect(Collectors.toList());
+
+                if (!matchedStocks.isEmpty()) {
+                    recyclerResults.setVisibility(View.VISIBLE);
+                    emptyState.setVisibility(View.GONE);
+                    resultsAdapter.setStocks(matchedStocks);
+                }
+            }
+        });
     }
 
     /**
@@ -217,17 +230,20 @@ public class SearchActivity extends AppCompatActivity {
 
         // เพิ่มหุ้นเข้า watchlist
         viewModel.addStock(symbol);
+        Toast.makeText(this, "เพิ่ม " + symbol + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
 
-        // สร้าง Stock object และเปิดหน้ารายละเอียด
-        Stock stock = new Stock(symbol);
-        openStockDetail(stock);
+        // เปิดหน้ารายละเอียด
+        openStockDetail(symbol);
     }
 
-    private void openStockDetail(Stock stock) {
+    /**
+     * ✅ แก้: เปิดหน้ารายละเอียดด้วย symbol เท่านั้น ให้หน้า StockDetailActivity ดึงข้อมูลเอง
+     */
+    private void openStockDetail(String symbol) {
         Intent intent = new Intent(this, StockDetailActivity.class);
-        intent.putExtra("symbol", stock.getSymbol());
-        intent.putExtra("price", stock.getCurrentPrice());
-        intent.putExtra("change", stock.getChangePercent());
+        intent.putExtra("symbol", symbol);
+        intent.putExtra("price", 0.0);  // ให้หน้า StockDetail ดึงข้อมูลเอง
+        intent.putExtra("change", 0.0);
         startActivity(intent);
     }
 }
