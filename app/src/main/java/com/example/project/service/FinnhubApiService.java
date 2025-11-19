@@ -4,12 +4,16 @@ import android.util.Log;
 
 import com.example.project.BuildConfig;
 import com.example.project.model.CandleData;
+import com.example.project.model.MarketNews;
 import com.example.project.model.MarketStatus;
 import com.example.project.model.StockQuote;
 import com.example.project.model.TimeFrame;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -28,6 +32,7 @@ public class FinnhubApiService {
     private static final String CANDLE_ENDPOINT = "https://finnhub.io/api/v1/stock/candle";
     private static final String QUOTE_ENDPOINT = "https://finnhub.io/api/v1/quote";
     private static final String MARKET_STATUS_ENDPOINT = "https://finnhub.io/api/v1/stock/market-status";
+    private static final String NEWS_ENDPOINT = "https://finnhub.io/api/v1/news";
     private static final int TIMEOUT_SECONDS = 30;
 
     private final OkHttpClient httpClient;
@@ -37,18 +42,7 @@ public class FinnhubApiService {
      * Callback interface for candle data fetching.
      */
     public interface CandleDataCallback {
-        /**
-         * Called when candle data is successfully fetched.
-         *
-         * @param candleData The fetched candle data
-         */
         void onSuccess(CandleData candleData);
-
-        /**
-         * Called when an error occurs during fetching.
-         *
-         * @param error Error message
-         */
         void onError(String error);
     }
 
@@ -56,18 +50,7 @@ public class FinnhubApiService {
      * Callback interface for quote data fetching.
      */
     public interface QuoteCallback {
-        /**
-         * Called when quote data is successfully fetched.
-         *
-         * @param quote The fetched stock quote
-         */
         void onSuccess(StockQuote quote);
-
-        /**
-         * Called when an error occurs during fetching.
-         *
-         * @param error Error message
-         */
         void onError(String error);
     }
 
@@ -75,18 +58,15 @@ public class FinnhubApiService {
      * Callback interface for market status fetching.
      */
     public interface MarketStatusCallback {
-        /**
-         * Called when market status is successfully fetched.
-         *
-         * @param status The fetched market status
-         */
         void onSuccess(MarketStatus status);
+        void onError(String error);
+    }
 
-        /**
-         * Called when an error occurs during fetching.
-         *
-         * @param error Error message
-         */
+    /**
+     * Callback interface for market news fetching.
+     */
+    public interface MarketNewsCallback {
+        void onSuccess(List<MarketNews> newsList);
         void onError(String error);
     }
 
@@ -230,36 +210,6 @@ public class FinnhubApiService {
     }
 
     /**
-     * Builds the complete URL for candle data API request.
-     *
-     * @param symbol     Stock symbol
-     * @param resolution Resolution parameter
-     * @param from       Start timestamp
-     * @param to         End timestamp
-     * @return Complete API URL
-     */
-    private String buildCandleUrl(String symbol, String resolution, long from, long to) {
-        return CANDLE_ENDPOINT +
-                "?symbol=" + symbol +
-                "&resolution=" + resolution +
-                "&from=" + from +
-                "&to=" + to +
-                "&token=" + BuildConfig.FINNHUB_API_KEY;
-    }
-
-    /**
-     * Builds the complete URL for quote API request.
-     *
-     * @param symbol Stock symbol
-     * @return Complete API URL
-     */
-    private String buildQuoteUrl(String symbol) {
-        return QUOTE_ENDPOINT +
-                "?symbol=" + symbol +
-                "&token=" + BuildConfig.FINNHUB_API_KEY;
-    }
-
-    /**
      * Fetches current market status for specified exchange.
      *
      * @param exchange Exchange code (e.g., "US")
@@ -311,10 +261,82 @@ public class FinnhubApiService {
     }
 
     /**
-     * Builds the complete URL for market status API request.
+     * Fetches latest market news.
      *
-     * @param exchange Exchange code
-     * @return Complete API URL
+     * @param category News category (e.g., "general", "forex", "crypto", "merger")
+     * @param callback Callback for handling response
+     */
+    public void fetchMarketNews(String category, MarketNewsCallback callback) {
+        String url = NEWS_ENDPOINT +
+                "?category=" + category +
+                "&token=" + BuildConfig.FINNHUB_API_KEY;
+
+        Log.d(TAG, "Fetching news from: " + url);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Failed to fetch news", e);
+                callback.onError("Network error: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Unsuccessful response: " + response.code());
+                    callback.onError("HTTP error: " + response.code());
+                    return;
+                }
+
+                try {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Received news data"); // Don't log full body if it's huge
+
+                    // Parse JSON Array to List using TypeToken
+                    Type listType = new TypeToken<List<MarketNews>>(){}.getType();
+                    List<MarketNews> newsList = gson.fromJson(responseBody, listType);
+
+                    if (newsList != null) {
+                        callback.onSuccess(newsList);
+                    } else {
+                        callback.onError("No news data found");
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error parsing news", e);
+                    callback.onError("Parsing error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    /**
+     * Builds the complete URL for candle data API request.
+     */
+    private String buildCandleUrl(String symbol, String resolution, long from, long to) {
+        return CANDLE_ENDPOINT +
+                "?symbol=" + symbol +
+                "&resolution=" + resolution +
+                "&from=" + from +
+                "&to=" + to +
+                "&token=" + BuildConfig.FINNHUB_API_KEY;
+    }
+
+    /**
+     * Builds the complete URL for quote API request.
+     */
+    private String buildQuoteUrl(String symbol) {
+        return QUOTE_ENDPOINT +
+                "?symbol=" + symbol +
+                "&token=" + BuildConfig.FINNHUB_API_KEY;
+    }
+
+    /**
+     * Builds the complete URL for market status API request.
      */
     private String buildMarketStatusUrl(String exchange) {
         return MARKET_STATUS_ENDPOINT +
