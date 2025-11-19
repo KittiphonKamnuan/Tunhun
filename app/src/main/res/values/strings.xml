@@ -6,7 +6,6 @@
     <string name="nav_search">Search</string>
     <string name="nav_profile">Profile</string>
 
-    <string name="welcome_prefix">Welcome to</string>
     <string name="app_dashboard_title">Dashboard</string>
     <string name="search_hint">Search stocks...</string>
     <string name="market_status_label">MARKET STATUS</string>

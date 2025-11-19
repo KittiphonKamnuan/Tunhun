@@ -6,7 +6,6 @@
     <string name="nav_search">ค้นหา</string>
     <string name="nav_profile">โปรไฟล์</string>
 
-    <string name="welcome_prefix">ยินดีต้อนรับสู่</string>
     <string name="app_dashboard_title">หน้าหลัก</string>
     <string name="search_hint">ค้นหาหุ้น...</string>
     <string name="market_status_label">สถานะตลาด</string>

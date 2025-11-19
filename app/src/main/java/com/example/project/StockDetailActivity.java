@@ -1,10 +1,12 @@
 package com.example.project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,18 +34,14 @@ import java.util.List;
 
 /**
  * Activity for displaying detailed stock information including price chart.
- * Shows current price, change percentage, and interactive chart with multiple time frames.
  */
 public class StockDetailActivity extends AppCompatActivity {
 
-    // Intent extras keys
     public static final String EXTRA_SYMBOL = "symbol";
     public static final String EXTRA_PRICE = "price";
     public static final String EXTRA_CHANGE = "change";
 
-    // Auto-refresh interval in milliseconds
     private static final long REFRESH_INTERVAL_MS = 3000;
-
     private static final String TAG = "StockDetailActivity";
 
     // UI Components
@@ -55,6 +53,7 @@ public class StockDetailActivity extends AppCompatActivity {
     private ProgressBar chartLoading;
     private TextView chartErrorText;
     private FloatingActionButton btnBack;
+    private ImageView btnShare;
     private MaterialButton btnBuy;
     private MaterialButton btnAddWatchlist;
 
@@ -68,16 +67,14 @@ public class StockDetailActivity extends AppCompatActivity {
     private String symbol;
     private double price;
     private double changePercent;
-    private TimeFrame currentTimeFrame = TimeFrame.ONE_DAY; // ✅ แก้เป็น ONE_DAY
+    private TimeFrame currentTimeFrame = TimeFrame.ONE_DAY;
 
-    // Services and handlers
+    // Services
     private StockViewModel viewModel;
     private FinnhubApiService apiService;
     private PortfolioRepository portfolioRepository;
     private Handler refreshHandler;
     private Runnable refreshRunnable;
-
-    // Store quote data
     private StockQuote latestQuote;
 
     @Override
@@ -91,39 +88,31 @@ public class StockDetailActivity extends AppCompatActivity {
         setupApiService();
         setupPortfolioRepository();
 
-        // ✅ แก้: เพิ่ม listener สำหรับปุ่ม back และ buy/watchlist
         setupBackButton();
         setupButtons();
 
-        // Fetch quote data เสมอเพื่อให้ได้ข้อมูล Open, High, Low, Prev Close
         fetchQuoteData();
 
         setupChart();
         setupListeners();
+
+        // โหลดกราฟครั้งแรก
+        loadChartData();
+
         startAutoRefresh();
     }
 
-    /**
-     * Extracts stock data from intent extras.
-     */
     private void extractIntentData() {
         symbol = getIntent().getStringExtra(EXTRA_SYMBOL);
-        if (symbol == null) {
-            symbol = getIntent().getStringExtra("symbol");
-        }
+        if (symbol == null) symbol = getIntent().getStringExtra("symbol");
+
         price = getIntent().getDoubleExtra(EXTRA_PRICE, 0.0);
-        if (price == 0.0) {
-            price = getIntent().getDoubleExtra("price", 0.0);
-        }
+        if (price == 0.0) price = getIntent().getDoubleExtra("price", 0.0);
+
         changePercent = getIntent().getDoubleExtra(EXTRA_CHANGE, 0.0);
-        if (changePercent == 0.0) {
-            changePercent = getIntent().getDoubleExtra("change", 0.0);
-        }
+        if (changePercent == 0.0) changePercent = getIntent().getDoubleExtra("change", 0.0);
     }
 
-    /**
-     * Initializes all view references.
-     */
     private void initializeViews() {
         symbolText = findViewById(R.id.text_symbol_detail);
         priceText = findViewById(R.id.text_price_detail);
@@ -133,83 +122,77 @@ public class StockDetailActivity extends AppCompatActivity {
         chartLoading = findViewById(R.id.chart_loading);
         chartErrorText = findViewById(R.id.chart_error_text);
         btnBack = findViewById(R.id.btn_back);
+        btnShare = findViewById(R.id.btn_share);
         btnBuy = findViewById(R.id.btn_buy);
         btnAddWatchlist = findViewById(R.id.btn_add_watchlist);
 
-        // ✅ แก้: เพิ่ม TextView สำหรับ Stock Information
         textOpenPrice = findViewById(R.id.text_open_price);
         textHighPrice = findViewById(R.id.text_high_price);
         textLowPrice = findViewById(R.id.text_low_price);
         textPrevClose = findViewById(R.id.text_prev_close);
     }
 
-    /**
-     * Sets up the ViewModel for stock data observation.
-     */
     private void setupViewModel() {
         viewModel = new ViewModelProvider(this).get(StockViewModel.class);
     }
 
-    /**
-     * Sets up the API service for fetching historical data.
-     */
     private void setupApiService() {
         apiService = new FinnhubApiService();
     }
 
-    /**
-     * Sets up the portfolio repository.
-     */
     private void setupPortfolioRepository() {
         portfolioRepository = PortfolioRepository.getInstance(this);
     }
 
-    /**
-     * ✅ แก้: เพิ่ม method สำหรับปุ่ม back
-     */
     private void setupBackButton() {
-        btnBack.setOnClickListener(v -> finish());
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
     }
 
-    /**
-     * ✅ แก้: เพิ่ม method สำหรับปุ่ม Buy และ Add Watchlist
-     */
     private void setupButtons() {
-        // Buy button - Show buy dialog
-        btnBuy.setOnClickListener(v -> showBuyDialog());
-
-        // Add to Watchlist button
-        btnAddWatchlist.setOnClickListener(v -> {
-            viewModel.addStock(symbol);
-            Toast.makeText(this, "เพิ่ม " + symbol + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
-        });
+        if (btnBuy != null) {
+            btnBuy.setOnClickListener(v -> showBuyDialog());
+        }
+        if (btnAddWatchlist != null) {
+            btnAddWatchlist.setOnClickListener(v -> {
+                viewModel.addStock(symbol);
+                Toast.makeText(this, "Added " + symbol + " to Watchlist", Toast.LENGTH_SHORT).show();
+            });
+        }
+        if (btnShare != null) {
+            btnShare.setOnClickListener(v -> shareStockInfo());
+        }
     }
 
-    /**
-     * Show buy stock dialog
-     */
+    private void shareStockInfo() {
+        String shareText = "Check out " + symbol + " on Tunhun App!\n" +
+                "Price: " + String.format("%.2f", price) + "\n" +
+                "Change: " + StockColorHelper.formatChangePercent(changePercent);
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, "Share via");
+        startActivity(shareIntent);
+    }
+
     private void showBuyDialog() {
         if (price <= 0) {
-            Toast.makeText(this, "กรุณารอโหลดราคาหุ้น", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please wait for price data...", Toast.LENGTH_SHORT).show();
             return;
         }
-
         double availableBalance = portfolioRepository.getCurrentBalance();
-
         BuyStockDialog dialog = BuyStockDialog.newInstance(symbol, price, availableBalance);
         dialog.setOnBuyConfirmedListener((symbol, shares, totalCost) -> {
-            // Refresh UI after purchase
-            Toast.makeText(this, "ตรวจสอบพอร์ตได้ที่แท็บ Portfolio", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Order placed successfully!", Toast.LENGTH_LONG).show();
         });
         dialog.show(getSupportFragmentManager(), "BuyStockDialog");
     }
 
-    /**
-     * Fetches current quote data from API.
-     */
     private void fetchQuoteData() {
-        Log.d(TAG, "Fetching quote for " + symbol);
-
         apiService.fetchQuote(symbol, new FinnhubApiService.QuoteCallback() {
             @Override
             public void onSuccess(StockQuote quote) {
@@ -217,49 +200,28 @@ public class StockDetailActivity extends AppCompatActivity {
                     latestQuote = quote;
                     price = quote.getCurrentPrice();
                     changePercent = quote.getPercentChange();
-                    Log.d(TAG, "Quote fetched: price=" + price + ", change=" + changePercent + "%");
                     displayStockInfo();
-                    displayStockInformation(); // ✅ แก้: แสดงข้อมูล Open, High, Low, Prev Close
-                    loadChartData();
+                    displayStockInformation();
                 });
             }
 
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Log.e(TAG, "Failed to fetch quote: " + error);
-                    Toast.makeText(StockDetailActivity.this,
-                            "Failed to load stock data: " + error,
-                            Toast.LENGTH_LONG).show();
-
-                    // Set default values
-                    price = 100.0;
-                    changePercent = 0.0;
+                    if (price == 0) price = 100.0;
                     displayStockInfo();
-                    loadChartData();
                 });
             }
         });
     }
 
-    /**
-     * Displays current stock information in the UI.
-     */
     private void displayStockInfo() {
-        // Set symbol
         symbolText.setText(symbol);
-
-        // Set price (without $ sign for cleaner look)
         priceText.setText(String.format("%.2f", price));
-
-        // Set change with formatted text and color
         changeText.setText(StockColorHelper.formatChangePercent(changePercent));
         changeText.setTextColor(StockColorHelper.getStockColor(this, changePercent));
     }
 
-    /**
-     * ✅ แก้: เพิ่ม method สำหรับแสดง Stock Information (ไม่มี $ เพื่อให้ดูสะอาด)
-     */
     private void displayStockInformation() {
         if (latestQuote != null) {
             textOpenPrice.setText(String.format("%.2f", latestQuote.getOpenPrice()));
@@ -274,17 +236,10 @@ public class StockDetailActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Initializes and configures the price chart.
-     */
     private void setupChart() {
         ChartHelper.configureChart(priceChart, this);
     }
 
-    /**
-     * Loads chart data from Finnhub API.
-     * Falls back to mock data if API is not available (e.g., free tier).
-     */
     private void loadChartData() {
         showLoading();
 
@@ -301,15 +256,7 @@ public class StockDetailActivity extends AppCompatActivity {
             public void onError(String error) {
                 runOnUiThread(() -> {
                     hideLoading();
-
-                    // Don't show error if it's access restriction (free tier)
-                    if (error.contains("access") || error.contains("resource")) {
-                        Log.i(TAG, "Candle API not available (free tier), using mock data");
-                    } else {
-                        Log.e(TAG, "Failed to load chart data: " + error);
-                    }
-
-                    // Always fallback to mock data
+                    // ⭐ จุดที่แก้ไข: ซ่อน Error เสมอ แล้วใช้ Mock Data
                     hideError();
                     updateChartWithMockData();
                 });
@@ -317,149 +264,79 @@ public class StockDetailActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Updates chart with API data.
-     */
     private void updateChartWithApiData(CandleData candleData) {
         List<Entry> entries = PriceDataGenerator.convertCandleDataToEntries(candleData);
 
-        if (entries.isEmpty()) {
-            showError("No data available");
+        // ⭐ จุดที่แก้ไข: ถ้าข้อมูลว่าง ให้ซ่อน Error แล้วใช้ Mock Data แทน
+        if (entries == null || entries.isEmpty()) {
+            hideError();
             updateChartWithMockData();
             return;
         }
 
+        hideError();
         ChartHelper.updateChartData(priceChart, entries, changePercent, this);
-        Log.d(TAG, "Chart updated with " + entries.size() + " data points from API");
     }
 
-    /**
-     * Updates chart with mock data as fallback.
-     */
     private void updateChartWithMockData() {
         List<Entry> entries = PriceDataGenerator.generateMockPriceData(price, changePercent);
         ChartHelper.updateChartData(priceChart, entries, changePercent, this);
-        Log.d(TAG, "Chart updated with mock data");
     }
 
-    /**
-     * Shows loading indicator and hides error message.
-     */
     private void showLoading() {
         chartLoading.setVisibility(View.VISIBLE);
         chartErrorText.setVisibility(View.GONE);
         priceChart.setAlpha(0.3f);
     }
 
-    /**
-     * Hides loading indicator.
-     */
     private void hideLoading() {
         chartLoading.setVisibility(View.GONE);
         priceChart.setAlpha(1.0f);
     }
 
-    /**
-     * Shows error message.
-     */
     private void showError(String error) {
         chartErrorText.setText(error);
         chartErrorText.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * Hides error message.
-     */
     private void hideError() {
         chartErrorText.setVisibility(View.GONE);
     }
 
-    /**
-     * Sets up all click listeners for UI components.
-     */
     private void setupListeners() {
-        setupTimeframeChipListener();
-    }
-
-    /**
-     * Configures the time frame chip group selection listener.
-     */
-    private void setupTimeframeChipListener() {
         chipGroupTimeframe.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (!checkedIds.isEmpty()) {
                 int checkedId = checkedIds.get(0);
                 currentTimeFrame = getTimeFrameFromChipId(checkedId);
-                loadChartData(); // Reload chart with new time frame
+                loadChartData();
             }
         });
     }
 
-    /**
-     * Maps chip ID to corresponding TimeFrame enum value.
-     *
-     * @param chipId Resource ID of the selected chip
-     * @return Corresponding TimeFrame enum value
-     */
     private TimeFrame getTimeFrameFromChipId(int chipId) {
-        if (chipId == R.id.chip_1d) {
-            return TimeFrame.ONE_DAY;
-        } else if (chipId == R.id.chip_5d) {
-            return TimeFrame.FIVE_DAYS;
-        } else if (chipId == R.id.chip_1m) {
-            return TimeFrame.ONE_MONTH;
-        } else if (chipId == R.id.chip_6m) {
-            return TimeFrame.SIX_MONTHS;
-        } else if (chipId == R.id.chip_ytd) {
-            return TimeFrame.YTD;
-        } else if (chipId == R.id.chip_1y) {
-            return TimeFrame.ONE_YEAR;
-        } else if (chipId == R.id.chip_5y) {
-            return TimeFrame.FIVE_YEARS;
-        } else if (chipId == R.id.chip_max) {
-            return TimeFrame.MAX;
-        }
-        return TimeFrame.ONE_DAY; // ✅ แก้: Default เป็น ONE_DAY
+        if (chipId == R.id.chip_1d) return TimeFrame.ONE_DAY;
+        else if (chipId == R.id.chip_5d) return TimeFrame.FIVE_DAYS;
+        else if (chipId == R.id.chip_1m) return TimeFrame.ONE_MONTH;
+        else if (chipId == R.id.chip_6m) return TimeFrame.SIX_MONTHS;
+        else if (chipId == R.id.chip_ytd) return TimeFrame.YTD;
+        else if (chipId == R.id.chip_1y) return TimeFrame.ONE_YEAR;
+        else if (chipId == R.id.chip_5y) return TimeFrame.FIVE_YEARS;
+        else if (chipId == R.id.chip_max) return TimeFrame.MAX;
+        return TimeFrame.ONE_DAY;
     }
 
-    /**
-     * Starts automatic data refresh at regular intervals.
-     */
     private void startAutoRefresh() {
         refreshHandler = new Handler(Looper.getMainLooper());
         refreshRunnable = new Runnable() {
             @Override
             public void run() {
-                observeStockUpdates();
+                fetchQuoteData();
                 refreshHandler.postDelayed(this, REFRESH_INTERVAL_MS);
             }
         };
         refreshHandler.post(refreshRunnable);
     }
 
-    /**
-     * Observes stock updates from ViewModel and updates UI when data changes.
-     */
-    private void observeStockUpdates() {
-        viewModel.getStockList().observe(this, stocks -> {
-            if (stocks != null) {
-                stocks.stream()
-                        .filter(stock -> stock.getSymbol().equals(symbol))
-                        .findFirst()
-                        .ifPresent(stock -> {
-                            // Update price info
-                            price = stock.getCurrentPrice();
-                            changePercent = stock.getChangePercent();
-                            displayStockInfo();
-                            // Note: We don't reload chart data on every price update
-                            // Chart data is loaded only on timeframe change or manual refresh
-                        });
-            }
-        });
-    }
-
-    /**
-     * Stops automatic data refresh when activity is destroyed.
-     */
     private void stopAutoRefresh() {
         if (refreshHandler != null && refreshRunnable != null) {
             refreshHandler.removeCallbacks(refreshRunnable);
@@ -470,8 +347,6 @@ public class StockDetailActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopAutoRefresh();
-
-        // Cancel any pending API requests
         if (apiService != null) {
             apiService.cancelAllRequests();
         }
