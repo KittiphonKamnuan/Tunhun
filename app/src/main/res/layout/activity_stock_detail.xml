@@ -425,12 +425,26 @@
             android:textColor="@android:color/white" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_sell"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="ขาย"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/negative_red"
+            app:cornerRadius="12dp"
+            android:textColor="@android:color/white" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_add_watchlist"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:text="เพิ่ม Watchlist"
+            android:text="Add List"
             android:textSize="16sp"
             android:textStyle="bold"
             app:backgroundTint="@color/surface"

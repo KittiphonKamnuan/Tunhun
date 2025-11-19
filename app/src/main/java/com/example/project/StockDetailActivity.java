@@ -15,7 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.project.dialog.BuyStockDialog;
+import com.example.project.dialog.SellStockDialog;
 import com.example.project.model.CandleData;
+import com.example.project.model.PortfolioItem;
 import com.example.project.model.StockQuote;
 import com.example.project.model.TimeFrame;
 import com.example.project.repository.PortfolioRepository;
@@ -55,6 +57,7 @@ public class StockDetailActivity extends AppCompatActivity {
     private FloatingActionButton btnBack;
     private ImageView btnShare;
     private MaterialButton btnBuy;
+    private MaterialButton btnSell;
     private MaterialButton btnAddWatchlist;
 
     // Stock Information TextViews
@@ -124,6 +127,7 @@ public class StockDetailActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btn_back);
         btnShare = findViewById(R.id.btn_share);
         btnBuy = findViewById(R.id.btn_buy);
+        btnSell = findViewById(R.id.btn_sell);
         btnAddWatchlist = findViewById(R.id.btn_add_watchlist);
 
         textOpenPrice = findViewById(R.id.text_open_price);
@@ -153,6 +157,9 @@ public class StockDetailActivity extends AppCompatActivity {
     private void setupButtons() {
         if (btnBuy != null) {
             btnBuy.setOnClickListener(v -> showBuyDialog());
+        }
+        if (btnSell != null) {
+            btnSell.setOnClickListener(v -> showSellDialog());
         }
         if (btnAddWatchlist != null) {
             btnAddWatchlist.setOnClickListener(v -> {
@@ -190,6 +197,27 @@ public class StockDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Order placed successfully!", Toast.LENGTH_LONG).show();
         });
         dialog.show(getSupportFragmentManager(), "BuyStockDialog");
+    }
+
+    private void showSellDialog() {
+        if (price <= 0) {
+            Toast.makeText(this, "Please wait for price data...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        PortfolioItem item = portfolioRepository.getPortfolioItem(symbol);
+        double ownedShares = item != null ? item.getShares() : 0;
+
+        if (ownedShares <= 0) {
+            Toast.makeText(this, "คุณยังไม่มีหุ้นสำหรับขาย", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        SellStockDialog dialog = SellStockDialog.newInstance(symbol, price, ownedShares);
+        dialog.setOnSellConfirmedListener((symbol, shares, totalValue) -> {
+            Toast.makeText(this, "ขายหุ้นสำเร็จ!", Toast.LENGTH_LONG).show();
+        });
+        dialog.show(getSupportFragmentManager(), "SellStockDialog");
     }
 
     private void fetchQuoteData() {
