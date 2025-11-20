@@ -193,7 +193,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Watchlist"
+                        android:text="@string/watchlist_section_title"
                         android:textSize="22sp"
                         android:textStyle="bold"
                         android:letterSpacing="-0.01"
@@ -202,7 +202,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="หุ้นที่คุณติดตาม"
+                        android:text="@string/watchlist_section_subtitle"
                         android:textSize="13sp"
                         android:textColor="@color/text_secondary"
                         android:layout_marginTop="2dp" />

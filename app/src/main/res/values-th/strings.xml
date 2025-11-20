@@ -39,4 +39,13 @@
     <string name="menu_about">เกี่ยวกับเรา</string>
     <string name="menu_logout">ออกจากระบบ</string>
     <string name="app_version">ทันหุ้น v1.0</string>
+
+    <!-- Stock detail buttons -->
+    <string name="stock_detail_buy">ซื้อ</string>
+    <string name="stock_detail_sell">ขาย</string>
+    <string name="stock_detail_add_watchlist">เพิ่ม Watchlist</string>
+
+    <!-- Watchlist section -->
+    <string name="watchlist_section_title">Watchlist</string>
+    <string name="watchlist_section_subtitle">หุ้นที่คุณติดตาม</string>
 </resources>
