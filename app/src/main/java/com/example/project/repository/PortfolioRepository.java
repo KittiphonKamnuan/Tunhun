@@ -2,13 +2,17 @@ package com.example.project.repository;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.project.model.PortfolioItem;
+import com.example.project.model.StockQuote;
 import com.example.project.model.Transaction;
+import com.example.project.service.FinnhubApiService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -19,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Repository for managing user's demo trading portfolio
+ * Repository for managing user's demo trading portfolio with auto price updates
  */
 public class PortfolioRepository {
     private static final String TAG = "PortfolioRepository";
@@ -28,25 +32,88 @@ public class PortfolioRepository {
     private static final String KEY_BALANCE = "demo_balance";
     private static final String KEY_TRANSACTIONS = "transactions";
     private static final double INITIAL_BALANCE = 100000.0; // $100,000 demo money
+    private static final long PRICE_UPDATE_INTERVAL = 30000; // 30 seconds
 
     private static PortfolioRepository instance;
     private final SharedPreferences sharedPreferences;
     private final Gson gson;
+    private final FinnhubApiService apiService;
+    private final Handler handler;
 
     private final Map<String, PortfolioItem> portfolioMap;
     private final MutableLiveData<List<PortfolioItem>> portfolioLiveData;
     private final MutableLiveData<Double> balanceLiveData;
     private final List<Transaction> transactions;
 
+    private Runnable priceUpdateRunnable;
+    private boolean isPriceUpdateActive = false;
+
     private PortfolioRepository(Context context) {
         this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
+        this.apiService = new FinnhubApiService();
+        this.handler = new Handler(Looper.getMainLooper());
         this.portfolioMap = new HashMap<>();
         this.portfolioLiveData = new MutableLiveData<>(new ArrayList<>());
         this.balanceLiveData = new MutableLiveData<>(INITIAL_BALANCE);
         this.transactions = new ArrayList<>();
 
         loadFromPreferences();
+        setupPriceUpdates();
+        startPriceUpdates();
+    }
+
+    private void setupPriceUpdates() {
+        priceUpdateRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isPriceUpdateActive && !portfolioMap.isEmpty()) {
+                    fetchAllPortfolioPrices();
+                    handler.postDelayed(this, PRICE_UPDATE_INTERVAL);
+                }
+            }
+        };
+    }
+
+    private void fetchAllPortfolioPrices() {
+        Log.d(TAG, "Fetching prices for " + portfolioMap.size() + " portfolio items");
+
+        for (String symbol : new ArrayList<>(portfolioMap.keySet())) {
+            apiService.fetchQuote(symbol, new FinnhubApiService.QuoteCallback() {
+                @Override
+                public void onSuccess(StockQuote quote) {
+                    handler.post(() -> {
+                        PortfolioItem item = portfolioMap.get(symbol);
+                        if (item != null) {
+                            item.setCurrentPrice(quote.getCurrentPrice());
+                            Log.d(TAG, symbol + " price updated: $" + quote.getCurrentPrice());
+                        }
+                        notifyPortfolioChanged();
+                    });
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.e(TAG, "Error fetching price for " + symbol + ": " + error);
+                }
+            });
+        }
+    }
+
+    public void startPriceUpdates() {
+        if (!isPriceUpdateActive) {
+            isPriceUpdateActive = true;
+            handler.post(priceUpdateRunnable);
+            Log.d(TAG, "Started portfolio price updates (30s interval)");
+        }
+    }
+
+    public void stopPriceUpdates() {
+        if (isPriceUpdateActive) {
+            isPriceUpdateActive = false;
+            handler.removeCallbacks(priceUpdateRunnable);
+            Log.d(TAG, "Stopped portfolio price updates");
+        }
     }
 
     public static synchronized PortfolioRepository getInstance(Context context) {

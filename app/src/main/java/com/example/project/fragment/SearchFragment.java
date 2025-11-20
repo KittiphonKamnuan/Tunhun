@@ -133,9 +133,9 @@ public class SearchFragment extends Fragment {
             boolean added = watchlistRepository.addSymbol(symbol);
             if (added) {
                 viewModel.addStock(symbol);
-                Toast.makeText(getContext(), "เพิ่ม " + symbol + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.toast_add_watchlist, symbol), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), symbol + " อยู่ใน Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.toast_already_in_watchlist, symbol), Toast.LENGTH_SHORT).show();
             }
             openStockDetail(symbol);
         });

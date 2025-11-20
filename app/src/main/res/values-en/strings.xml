@@ -1,0 +1,135 @@
+<resources>
+    <!-- App Name -->
+    <string name="app_name">TunHun</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_portfolio">Portfolio</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Dashboard -->
+    <string name="app_dashboard_title">Dashboard</string>
+    <string name="dashboard_welcome">Welcome to</string>
+    <string name="dashboard_title">TunHun Dashboard</string>
+    <string name="search_hint">Search stocks...</string>
+    <string name="market_status_label">Market Status</string>
+    <string name="market_status_open">Market Open</string>
+    <string name="market_status_closed">Market Closed</string>
+    <string name="market_hours">Trading Hours</string>
+    <string name="market_credit">Real-time stock prices from Finnhub</string>
+    <string name="trending_stocks">Trending Stocks</string>
+    <string name="trending_desc">Most popular today</string>
+    <string name="popular_stocks">Recommended Stocks</string>
+    <string name="popular_desc">Recommended for investors</string>
+    <string name="view_all">View All</string>
+
+    <!-- Portfolio -->
+    <string name="balance_label">Available Balance</string>
+    <string name="total_value_label">Total Value</string>
+    <string name="profit_loss_label">Profit/Loss</string>
+    <string name="holdings_label">Holdings</string>
+    <string name="empty_portfolio_title">No stocks in portfolio</string>
+    <string name="empty_portfolio_desc">Buy stocks to get started</string>
+    <string name="empty_portfolio_emoji">📊</string>
+
+    <!-- Search -->
+    <string name="search_page_title">Search Stocks</string>
+    <string name="search_input_hint">Search stocks...</string>
+    <string name="search_no_result">No stocks found</string>
+
+    <!-- Market Sessions -->
+    <string name="session_regular">Regular Hours</string>
+    <string name="session_pre">Pre-Market</string>
+    <string name="session_post">After-Hours</string>
+    <string name="session_closed">Closed</string>
+
+    <!-- Profile -->
+    <string name="user_name_placeholder">Investor</string>
+    <string name="user_email_placeholder">investor@tunhun.com</string>
+    <string name="menu_language">Language / ภาษา</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
+    <string name="menu_logout">Log Out</string>
+    <string name="app_version">TunHun v1.0</string>
+    <string name="dialog_choose_language">Choose Language / เลือกภาษา</string>
+    <string name="language_english">English</string>
+    <string name="language_thai">ไทย</string>
+
+    <!-- Stock Detail -->
+    <string name="stock_detail_buy">Buy</string>
+    <string name="stock_detail_sell">Sell</string>
+    <string name="stock_detail_add_watchlist">Add to Watchlist</string>
+    <string name="stock_detail_remove_watchlist">Remove from Watchlist</string>
+    <string name="stock_info_title">Stock Info</string>
+    <string name="stock_info_open">Open</string>
+    <string name="stock_info_high">High</string>
+    <string name="stock_info_low">Low</string>
+    <string name="stock_info_prev_close">Prev Close</string>
+
+    <!-- Insider Transactions -->
+    <string name="insider_transactions_title">Insider Transactions</string>
+    <string name="insider_transactions_subtitle">Stock trades by company insiders</string>
+    <string name="insider_shares_changed">Shares Changed</string>
+    <string name="insider_transaction_price">Avg. Price</string>
+    <string name="insider_total_shares">Shares After</string>
+    <string name="insider_no_transactions">No transaction data</string>
+    <string name="insider_loading">Loading...</string>
+
+    <!-- Watchlist -->
+    <string name="watchlist_section_title">Watchlist</string>
+    <string name="watchlist_section_subtitle">Stocks you\'re tracking</string>
+    <string name="watchlist_empty">No stocks in Watchlist</string>
+    <string name="watchlist_empty_action">Add stocks to get started</string>
+
+    <!-- Buy Dialog -->
+    <string name="dialog_buy_title">Buy Stock</string>
+    <string name="dialog_current_price">Current Price:</string>
+    <string name="dialog_available_balance">Available Balance:</string>
+    <string name="dialog_shares_label">Number of Shares:</string>
+    <string name="dialog_shares_hint">Enter number of shares</string>
+    <string name="dialog_total_cost">Total Cost:</string>
+    <string name="dialog_btn_cancel">Cancel</string>
+    <string name="dialog_btn_confirm">Confirm Purchase</string>
+
+    <!-- Sell Dialog -->
+    <string name="dialog_sell_title">Sell Stock</string>
+    <string name="dialog_shares_owned">Shares Owned:</string>
+    <string name="dialog_btn_confirm_sell">Confirm Sale</string>
+
+    <!-- Toast Messages -->
+    <string name="toast_buy_success">Successfully bought %1$s shares of %2$s</string>
+    <string name="toast_sell_success">Successfully sold %1$s shares of %2$s</string>
+    <string name="toast_insufficient_balance">Insufficient balance</string>
+    <string name="toast_insufficient_shares">Insufficient shares</string>
+    <string name="toast_invalid_shares">Invalid number of shares</string>
+    <string name="toast_invalid_shares_zero">Number of shares must be greater than 0</string>
+    <string name="toast_enter_shares">Please enter number of shares</string>
+    <string name="toast_purchase_failed">Purchase failed, please try again</string>
+    <string name="toast_sell_failed">Sale failed, please try again</string>
+    <string name="toast_add_watchlist">Added %s to Watchlist</string>
+    <string name="toast_remove_watchlist">Removed %s from Watchlist</string>
+    <string name="toast_already_in_watchlist">%s is already in Watchlist</string>
+    <string name="toast_wait_price">Please wait for stock price</string>
+    <string name="toast_order_success">Order placed successfully!</string>
+    <string name="toast_check_portfolio">Check portfolio in Portfolio tab</string>
+    <string name="toast_feature_coming_soon">This feature is coming soon</string>
+    <string name="toast_settings_coming_soon">Settings feature coming soon</string>
+    <string name="toast_logout_coming_soon">Logout feature coming soon</string>
+
+    <!-- Errors -->
+    <string name="error_loading">Error loading data</string>
+    <string name="error_network">Unable to connect to network</string>
+    <string name="error_symbol_not_available">Stock data not available</string>
+
+    <!-- Common -->
+    <string name="btn_ok">OK</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_back">Back</string>
+    <string name="btn_share">Share</string>
+    <string name="loading">Loading...</string>
+    <string name="live">Live</string>
+    <string name="shares">shares</string>
+    <string name="avg_cost">Avg. Cost</string>
+</resources>

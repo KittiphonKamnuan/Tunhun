@@ -1,51 +1,135 @@
 <resources>
-    <string name="app_name">Tunhun</string>
+    <!-- App Name -->
+    <string name="app_name">ทันหุ้น</string>
 
-    <string name="nav_home">Home</string>
-    <string name="nav_portfolio">Portfolio</string>
-    <string name="nav_search">Search</string>
-    <string name="nav_profile">Profile</string>
+    <!-- Navigation -->
+    <string name="nav_home">หน้าหลัก</string>
+    <string name="nav_portfolio">พอร์ตโฟลิโอ</string>
+    <string name="nav_search">ค้นหา</string>
+    <string name="nav_profile">โปรไฟล์</string>
 
+    <!-- Dashboard -->
     <string name="app_dashboard_title">Dashboard</string>
-    <string name="search_hint">Search stocks...</string>
-    <string name="market_status_label">MARKET STATUS</string>
-    <string name="market_status_open">US Market Open</string>
-    <string name="market_status_closed">US Market Closed</string>
-    <string name="market_hours">Market Hours</string>
-    <string name="market_credit">Real-time stock prices powered by Finnhub</string>
-    <string name="trending_stocks">Trending Stocks</string>
-    <string name="trending_desc">Most active today</string>
-    <string name="popular_stocks">Popular Stocks</string>
-    <string name="popular_desc">Top picks for investors</string>
-    <string name="view_all">View All</string>
+    <string name="dashboard_welcome">ยินดีต้อนรับสู่</string>
+    <string name="dashboard_title">ทันหุ้น Dashboard</string>
+    <string name="search_hint">ค้นหาหุ้น...</string>
+    <string name="market_status_label">สถานะตลาด</string>
+    <string name="market_status_open">ตลาดเปิด</string>
+    <string name="market_status_closed">ตลาดปิด</string>
+    <string name="market_hours">เวลาทำการ</string>
+    <string name="market_credit">ราคาหุ้น real-time จาก Finnhub</string>
+    <string name="trending_stocks">หุ้นยอดนิยม</string>
+    <string name="trending_desc">มีผู้สนใจมากที่สุดวันนี้</string>
+    <string name="popular_stocks">หุ้นแนะนำ</string>
+    <string name="popular_desc">แนะนำสำหรับนักลงทุน</string>
+    <string name="view_all">ดูทั้งหมด</string>
 
-    <string name="balance_label">Available Balance</string>
-    <string name="total_value_label">Total Value</string>
-    <string name="profit_loss_label">Profit/Loss</string>
-    <string name="holdings_label">My Holdings</string>
-    <string name="empty_portfolio_title">No stocks in portfolio</string>
-    <string name="empty_portfolio_desc">Buy stocks to get started</string>
-    <string name="search_page_title">Search Stocks</string>
-    <string name="search_input_hint">Search for stocks...</string>
-    <string name="search_no_result">No stocks found</string>
-    <string name="session_regular">Regular Trading</string>
-    <string name="session_pre">Pre-Market</string>
-    <string name="session_post">Post-Market</string>
-    <string name="session_closed">Market Closed</string>
+    <!-- Portfolio -->
+    <string name="balance_label">เงินคงเหลือ</string>
+    <string name="total_value_label">มูลค่ารวม</string>
+    <string name="profit_loss_label">กำไร/ขาดทุน</string>
+    <string name="holdings_label">หุ้นที่ถืออยู่</string>
+    <string name="empty_portfolio_title">ยังไม่มีหุ้นในพอร์ต</string>
+    <string name="empty_portfolio_desc">ซื้อหุ้นเพื่อเริ่มต้น</string>
+    <string name="empty_portfolio_emoji">📊</string>
 
-    <string name="user_name_placeholder">Investor</string>
-    <string name="menu_language">Language / ภาษา</string>
-    <string name="menu_settings">Settings</string>
-    <string name="menu_about">About</string>
-    <string name="menu_logout">Logout</string>
-    <string name="app_version">Tunhun v1.0</string>
+    <!-- Search -->
+    <string name="search_page_title">ค้นหาหุ้น</string>
+    <string name="search_input_hint">ค้นหาหุ้น...</string>
+    <string name="search_no_result">ไม่พบหุ้น</string>
 
-    <!-- Stock detail buttons -->
-    <string name="stock_detail_buy">Buy</string>
-    <string name="stock_detail_sell">Sell</string>
-    <string name="stock_detail_add_watchlist">Add to Watchlist</string>
+    <!-- Market Sessions -->
+    <string name="session_regular">เวลาทำการ</string>
+    <string name="session_pre">ก่อนเปิดตลาด</string>
+    <string name="session_post">หลังปิดตลาด</string>
+    <string name="session_closed">ปิดทำการ</string>
 
-    <!-- Watchlist section -->
+    <!-- Profile -->
+    <string name="user_name_placeholder">นักลงทุน</string>
+    <string name="user_email_placeholder">investor@tunhun.com</string>
+    <string name="menu_language">ภาษา / Language</string>
+    <string name="menu_settings">การตั้งค่า</string>
+    <string name="menu_about">เกี่ยวกับ</string>
+    <string name="menu_logout">ออกจากระบบ</string>
+    <string name="app_version">ทันหุ้น v1.0</string>
+    <string name="dialog_choose_language">เลือกภาษา / Choose Language</string>
+    <string name="language_english">English</string>
+    <string name="language_thai">ไทย</string>
+
+    <!-- Stock Detail -->
+    <string name="stock_detail_buy">ซื้อ</string>
+    <string name="stock_detail_sell">ขาย</string>
+    <string name="stock_detail_add_watchlist">เพิ่ม Watchlist</string>
+    <string name="stock_detail_remove_watchlist">ลบจาก Watchlist</string>
+    <string name="stock_info_title">ข้อมูลหุ้น</string>
+    <string name="stock_info_open">เปิด</string>
+    <string name="stock_info_high">สูงสุด</string>
+    <string name="stock_info_low">ต่ำสุด</string>
+    <string name="stock_info_prev_close">ปิดครั้งก่อน</string>
+
+    <!-- Insider Transactions -->
+    <string name="insider_transactions_title">การซื้อขายของผู้บริหาร</string>
+    <string name="insider_transactions_subtitle">ข้อมูลการซื้อขายหุ้นโดยผู้บริหารบริษัท</string>
+    <string name="insider_shares_changed">จำนวนหุ้นที่เปลี่ยน</string>
+    <string name="insider_transaction_price">ราคาเฉลี่ย</string>
+    <string name="insider_total_shares">หุ้นที่ถือหลังธุรกรรม</string>
+    <string name="insider_no_transactions">ไม่มีข้อมูลการซื้อขาย</string>
+    <string name="insider_loading">กำลังโหลดข้อมูล...</string>
+
+    <!-- Watchlist -->
     <string name="watchlist_section_title">Watchlist</string>
-    <string name="watchlist_section_subtitle">Stocks you follow</string>
+    <string name="watchlist_section_subtitle">หุ้นที่คุณติดตาม</string>
+    <string name="watchlist_empty">ยังไม่มีหุ้นใน Watchlist</string>
+    <string name="watchlist_empty_action">เพิ่มหุ้นเพื่อเริ่มต้น</string>
+
+    <!-- Buy Dialog -->
+    <string name="dialog_buy_title">ซื้อหุ้น</string>
+    <string name="dialog_current_price">ราคาปัจจุบัน:</string>
+    <string name="dialog_available_balance">เงินคงเหลือ:</string>
+    <string name="dialog_shares_label">จำนวนหุ้น:</string>
+    <string name="dialog_shares_hint">ใส่จำนวนหุ้น</string>
+    <string name="dialog_total_cost">ยอดรวม:</string>
+    <string name="dialog_btn_cancel">ยกเลิก</string>
+    <string name="dialog_btn_confirm">ยืนยันการซื้อ</string>
+
+    <!-- Sell Dialog -->
+    <string name="dialog_sell_title">ขายหุ้น</string>
+    <string name="dialog_shares_owned">จำนวนที่ถือ:</string>
+    <string name="dialog_btn_confirm_sell">ยืนยันการขาย</string>
+
+    <!-- Toast Messages -->
+    <string name="toast_buy_success">ซื้อ %1$s หุ้น %2$s สำเร็จ</string>
+    <string name="toast_sell_success">ขาย %1$s หุ้น %2$s สำเร็จ</string>
+    <string name="toast_insufficient_balance">เงินไม่เพียงพอ</string>
+    <string name="toast_insufficient_shares">จำนวนหุ้นไม่เพียงพอ</string>
+    <string name="toast_invalid_shares">จำนวนหุ้นไม่ถูกต้อง</string>
+    <string name="toast_invalid_shares_zero">จำนวนหุ้นต้องมากกว่า 0</string>
+    <string name="toast_enter_shares">กรุณาใส่จำนวนหุ้น</string>
+    <string name="toast_purchase_failed">การซื้อล้มเหลว กรุณาลองใหม่</string>
+    <string name="toast_sell_failed">การขายล้มเหลว กรุณาลองใหม่</string>
+    <string name="toast_add_watchlist">เพิ่ม %s เข้า Watchlist แล้ว</string>
+    <string name="toast_remove_watchlist">ลบ %s ออกจาก Watchlist แล้ว</string>
+    <string name="toast_already_in_watchlist">%s อยู่ใน Watchlist แล้ว</string>
+    <string name="toast_wait_price">กรุณารอโหลดราคาหุ้น</string>
+    <string name="toast_order_success">สั่งซื้อสำเร็จ!</string>
+    <string name="toast_check_portfolio">ตรวจสอบพอร์ตได้ที่แท็บ Portfolio</string>
+    <string name="toast_feature_coming_soon">ฟีเจอร์นี้จะมาเร็วๆ นี้</string>
+    <string name="toast_settings_coming_soon">ฟีเจอร์การตั้งค่าจะมาเร็วๆ นี้</string>
+    <string name="toast_logout_coming_soon">ฟีเจอร์ออกจากระบบจะมาเร็วๆ นี้</string>
+
+    <!-- Errors -->
+    <string name="error_loading">เกิดข้อผิดพลาดในการโหลดข้อมูล</string>
+    <string name="error_network">ไม่สามารถเชื่อมต่อเครือข่ายได้</string>
+    <string name="error_symbol_not_available">ไม่มีข้อมูลหุ้นนี้</string>
+
+    <!-- Common -->
+    <string name="btn_ok">ตกลง</string>
+    <string name="btn_cancel">ยกเลิก</string>
+    <string name="btn_close">ปิด</string>
+    <string name="btn_back">ย้อนกลับ</string>
+    <string name="btn_share">แชร์</string>
+    <string name="loading">กำลังโหลด...</string>
+    <string name="live">Live</string>
+    <string name="shares">shares</string>
+    <string name="avg_cost">Avg. Cost</string>
 </resources>

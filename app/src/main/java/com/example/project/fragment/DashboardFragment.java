@@ -135,7 +135,7 @@ public class DashboardFragment extends Fragment {
         watchlistAdapter.setOnStockRemoveListener(stock -> {
             watchlistRepository.removeSymbol(stock.getSymbol());
             viewModel.removeStock(stock.getSymbol());
-            Toast.makeText(getContext(), "ลบ " + stock.getSymbol() + " ออกจาก Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.toast_remove_watchlist, stock.getSymbol()), Toast.LENGTH_SHORT).show();
         });
 
         // Trending stocks
@@ -199,8 +199,10 @@ public class DashboardFragment extends Fragment {
             return;
         }
 
+        // ✅ แก้: จำกัดแสดงสูงสุด 4 อัน
         List<Stock> watchlistStocks = latestStockList.stream()
                 .filter(stock -> watchlistSymbols.contains(stock.getSymbol()))
+                .limit(4)  // จำกัดแสดงสูงสุด 4 อัน
                 .collect(Collectors.toList());
 
         if (watchlistStocks.isEmpty()) {
@@ -242,8 +244,8 @@ public class DashboardFragment extends Fragment {
                         popularAdapter.setStocks(filterStocks(stocks, POPULAR_STOCKS));
                     }
                 });
-                // Refresh every 60 seconds
-                refreshHandler.postDelayed(this, 60000);
+                // Refresh every 30 seconds
+                refreshHandler.postDelayed(this, 30000);
             }
         };
         refreshHandler.post(refreshRunnable);
@@ -264,7 +266,7 @@ public class DashboardFragment extends Fragment {
                     getActivity().runOnUiThread(() -> {
                         marketEmojiText.setText("⚪");
                         marketStatusText.setText(R.string.market_status_label);
-                        marketSessionText.setText("Loading...");
+                        marketSessionText.setText(R.string.loading);
                     });
                 }
             }
@@ -311,7 +313,7 @@ public class DashboardFragment extends Fragment {
             @Override
             public void run() {
                 loadMarketStatus();
-                marketStatusRefreshHandler.postDelayed(this, 60000);
+                marketStatusRefreshHandler.postDelayed(this, 30000);
             }
         };
         marketStatusRefreshHandler.post(marketStatusRefreshRunnable);

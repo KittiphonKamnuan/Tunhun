@@ -53,17 +53,17 @@ public class ProfileFragment extends Fragment {
         // 3. ปุ่ม Logout (ตัวอย่าง)
         MaterialCardView cardLogout = view.findViewById(R.id.card_logout);
         cardLogout.setOnClickListener(v -> {
-            Toast.makeText(getActivity(), "Logged out", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.toast_logout_coming_soon, Toast.LENGTH_SHORT).show();
             // ใส่โค้ด Logout จริงๆ ตรงนี้
         });
     }
 
     private void showChangeLanguageDialog() {
         // รายชื่อภาษาที่จะแสดงให้เลือก
-        final String[] listItems = {"English", "ไทย"};
+        final String[] listItems = {getString(R.string.language_english), getString(R.string.language_thai)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Choose Language / เลือกภาษา");
+        builder.setTitle(R.string.dialog_choose_language);
         builder.setSingleChoiceItems(listItems, -1, (dialogInterface, i) -> {
             if (i == 0) {
                 // เลือก English

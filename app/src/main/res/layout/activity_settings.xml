@@ -57,7 +57,7 @@
                         android:textColor="@color/text_primary"
                         android:layout_marginBottom="16dp" />
 
-                    <!-- Auto Refresh -->
+                    <!-- Auto Refresh (Fixed at 30 seconds) -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -82,52 +82,18 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Automatically update stock prices"
+                                android:text="Updates every 30 seconds (Fixed)"
                                 android:textSize="13sp"
-                                android:textColor="@color/text_secondary"
+                                android:textColor="@color/positive_green"
                                 android:layout_marginTop="4dp" />
                         </LinearLayout>
 
-                        <Switch
-                            android:id="@+id/switch_auto_refresh"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/divider" />
-
-                    <!-- Refresh Interval -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp">
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Refresh Interval"
-                            android:textSize="16sp"
-                            android:textColor="@color/text_primary" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="How often to update prices"
-                            android:textSize="13sp"
-                            android:textColor="@color/text_secondary"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginBottom="12dp" />
-
-                        <Spinner
-                            android:id="@+id/spinner_refresh_interval"
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_input_field" />
+                            android:text="✓"
+                            android:textSize="24sp"
+                            android:textColor="@color/positive_green" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

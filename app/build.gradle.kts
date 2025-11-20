@@ -17,16 +17,23 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Read API key from local.properties
+        // Read API keys from local.properties
         val localPropertiesFile = rootProject.file("local.properties")
         val localProperties = Properties()
         if (localPropertiesFile.exists()) {
             localProperties.load(localPropertiesFile.inputStream())
         }
 
-        // Add API key to BuildConfig
+        // Add multiple API keys to BuildConfig
         val finnhubApiKey = localProperties.getProperty("FINNHUB_API_KEY", "")
+        val finnhubApiKey2 = localProperties.getProperty("FINNHUB_API_KEY_2", "")
+        val finnhubApiKey3 = localProperties.getProperty("FINNHUB_API_KEY_3", "")
+        val finnhubApiKey4 = localProperties.getProperty("FINNHUB_API_KEY_4", "")
+
         buildConfigField("String", "FINNHUB_API_KEY", "\"$finnhubApiKey\"")
+        buildConfigField("String", "FINNHUB_API_KEY_2", "\"$finnhubApiKey2\"")
+        buildConfigField("String", "FINNHUB_API_KEY_3", "\"$finnhubApiKey3\"")
+        buildConfigField("String", "FINNHUB_API_KEY_4", "\"$finnhubApiKey4\"")
     }
 
     buildTypes {

@@ -72,17 +72,12 @@
             app:layout_constraintTop_toBottomOf="@id/text_symbol"
             app:layout_constraintEnd_toStartOf="@id/text_change" />
 
-        <!-- Remove Button -->
+        <!-- Remove Button - ซ่อนไว้ แต่ยังคงไว้ใน layout เพื่อไม่ให้ code error -->
         <ImageButton
             android:id="@+id/button_remove"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@android:drawable/ic_menu_delete"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Remove stock"
-            android:tint="@color/text_secondary"
-            android:scaleType="fitCenter"
-            android:layout_marginStart="8dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 

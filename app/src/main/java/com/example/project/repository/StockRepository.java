@@ -10,8 +10,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.project.model.Stock;
-import com.example.project.model.TradeMessage;
-import com.example.project.service.FinnhubWebSocketClient;
+import com.example.project.model.StockQuote;
+import com.example.project.service.FinnhubApiService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -22,34 +22,38 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Repository for managing stock data and WebSocket connection
+ * Repository for managing stock data with 30-second polling
  */
 public class StockRepository {
     private static final String TAG = "StockRepository";
     private static final String PREFS_NAME = "stock_watchlist_prefs";
     private static final String KEY_WATCHLIST = "watchlist";
+    private static final long POLLING_INTERVAL = 30000; // 30 seconds
 
     private static StockRepository instance;
     private final SharedPreferences sharedPreferences;
     private final Gson gson;
-    private final FinnhubWebSocketClient webSocketClient;
+    private final FinnhubApiService apiService;
     private final Handler mainHandler;
 
     private final Map<String, Stock> stockMap;
     private final MutableLiveData<List<Stock>> stockListLiveData;
     private final MutableLiveData<Boolean> connectionStatusLiveData;
 
+    private Runnable pollingRunnable;
+    private boolean isPolling = false;
+
     private StockRepository(Context context) {
         this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
-        this.webSocketClient = new FinnhubWebSocketClient();
+        this.apiService = new FinnhubApiService();
         this.mainHandler = new Handler(Looper.getMainLooper());
         this.stockMap = new HashMap<>();
         this.stockListLiveData = new MutableLiveData<>(new ArrayList<>());
         this.connectionStatusLiveData = new MutableLiveData<>(false);
 
-        setupWebSocketListener();
         loadWatchlistFromPreferences();
+        setupPolling();
     }
 
     public static synchronized StockRepository getInstance(Context context) {
@@ -59,72 +63,77 @@ public class StockRepository {
         return instance;
     }
 
-    private void setupWebSocketListener() {
-        webSocketClient.setTradeUpdateListener(new FinnhubWebSocketClient.TradeUpdateListener() {
+    private void setupPolling() {
+        pollingRunnable = new Runnable() {
             @Override
-            public void onTradeUpdate(TradeMessage tradeMessage) {
-                // Process trade updates on the main thread
-                mainHandler.post(() -> processTradeUpdate(tradeMessage));
+            public void run() {
+                if (isPolling) {
+                    fetchAllStockPrices();
+                    mainHandler.postDelayed(this, POLLING_INTERVAL);
+                }
             }
-
-            @Override
-            public void onConnectionStatusChanged(boolean connected) {
-                mainHandler.post(() -> {
-                    connectionStatusLiveData.setValue(connected);
-                    Log.d(TAG, "Connection status changed: " + connected);
-
-                    // Resubscribe to all stocks when reconnected
-                    if (connected) {
-                        for (String symbol : stockMap.keySet()) {
-                            webSocketClient.subscribe(symbol);
-                        }
-                    }
-                });
-            }
-        });
+        };
     }
 
-    private void processTradeUpdate(TradeMessage tradeMessage) {
-        if (tradeMessage.getData() == null || tradeMessage.getData().isEmpty()) {
+    private void fetchAllStockPrices() {
+        if (stockMap.isEmpty()) {
             return;
         }
 
-        boolean updated = false;
-        for (TradeMessage.TradeData trade : tradeMessage.getData()) {
-            String symbol = trade.getSymbol();
-            Stock stock = stockMap.get(symbol);
+        Log.d(TAG, "Fetching prices for " + stockMap.size() + " stocks");
 
-            if (stock != null) {
-                double currentPrice = stock.getCurrentPrice();
-                double newPrice = trade.getPrice();
-
-                // Set opening price from first trade received
-                if (currentPrice == 0 && newPrice > 0) {
-                    stock.setOpeningPrice(newPrice);
-                    Log.d(TAG, symbol + " opening price set to: " + newPrice);
+        for (String symbol : new ArrayList<>(stockMap.keySet())) {
+            apiService.fetchQuote(symbol, new FinnhubApiService.QuoteCallback() {
+                @Override
+                public void onSuccess(StockQuote quote) {
+                    mainHandler.post(() -> updateStockPrice(symbol, quote));
                 }
 
-                // Update current price
-                stock.setCurrentPrice(newPrice);
+                @Override
+                public void onError(String error) {
+                    Log.e(TAG, "Error fetching quote for " + symbol + ": " + error);
+                }
+            });
+        }
+    }
 
-                // Calculate percentage change from opening price
-                stock.calculateChangePercentFromOpening();
-
-                updated = true;
+    private void updateStockPrice(String symbol, StockQuote quote) {
+        Stock stock = stockMap.get(symbol);
+        if (stock != null) {
+            // Set opening price (previous close)
+            if (stock.getCurrentPrice() == 0) {
+                stock.setOpeningPrice(quote.getPreviousClose());
             }
-        }
 
-        if (updated) {
-            notifyStockListChanged();
+            // Update current price
+            stock.setCurrentPrice(quote.getCurrentPrice());
+
+            // Calculate change percent
+            double change = quote.getCurrentPrice() - quote.getPreviousClose();
+            double changePercent = (change / quote.getPreviousClose()) * 100;
+            stock.setChangePercent(changePercent);
+
+            Log.d(TAG, symbol + " updated: $" + quote.getCurrentPrice() + " (" + String.format("%.2f", changePercent) + "%)");
         }
+        notifyStockListChanged();
     }
 
     public void connect() {
-        webSocketClient.connect();
+        if (!isPolling) {
+            isPolling = true;
+            connectionStatusLiveData.setValue(true);
+            Log.d(TAG, "Starting 30-second polling");
+            mainHandler.post(pollingRunnable);
+        }
     }
 
     public void disconnect() {
-        webSocketClient.disconnect();
+        if (isPolling) {
+            isPolling = false;
+            connectionStatusLiveData.setValue(false);
+            mainHandler.removeCallbacks(pollingRunnable);
+            Log.d(TAG, "Stopped polling");
+        }
     }
 
     public void addStock(String symbol) {
@@ -143,9 +152,18 @@ public class StockRepository {
         Stock stock = new Stock(upperSymbol);
         stockMap.put(upperSymbol, stock);
 
-        if (webSocketClient.isConnected()) {
-            webSocketClient.subscribe(upperSymbol);
-        }
+        // Fetch initial price immediately
+        apiService.fetchQuote(upperSymbol, new FinnhubApiService.QuoteCallback() {
+            @Override
+            public void onSuccess(StockQuote quote) {
+                mainHandler.post(() -> updateStockPrice(upperSymbol, quote));
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, "Error fetching initial quote for " + upperSymbol + ": " + error);
+            }
+        });
 
         saveWatchlistToPreferences();
         notifyStockListChanged();
@@ -161,10 +179,6 @@ public class StockRepository {
         Stock removed = stockMap.remove(upperSymbol);
 
         if (removed != null) {
-            if (webSocketClient.isConnected()) {
-                webSocketClient.unsubscribe(upperSymbol);
-            }
-
             saveWatchlistToPreferences();
             notifyStockListChanged();
             Log.d(TAG, "Removed stock: " + upperSymbol);
@@ -226,6 +240,6 @@ public class StockRepository {
     }
 
     public boolean isConnected() {
-        return webSocketClient.isConnected();
+        return isPolling;
     }
 }

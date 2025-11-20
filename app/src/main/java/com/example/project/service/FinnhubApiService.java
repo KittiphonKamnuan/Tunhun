@@ -4,10 +4,12 @@ import android.util.Log;
 
 import com.example.project.BuildConfig;
 import com.example.project.model.CandleData;
+import com.example.project.model.InsiderTransactionResponse;
 import com.example.project.model.MarketNews;
 import com.example.project.model.MarketStatus;
 import com.example.project.model.StockQuote;
 import com.example.project.model.TimeFrame;
+import com.example.project.util.ApiKeyManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -33,10 +35,12 @@ public class FinnhubApiService {
     private static final String QUOTE_ENDPOINT = "https://finnhub.io/api/v1/quote";
     private static final String MARKET_STATUS_ENDPOINT = "https://finnhub.io/api/v1/stock/market-status";
     private static final String NEWS_ENDPOINT = "https://finnhub.io/api/v1/news";
+    private static final String INSIDER_TRANSACTIONS_ENDPOINT = "https://finnhub.io/api/v1/stock/insider-transactions";
     private static final int TIMEOUT_SECONDS = 30;
 
     private final OkHttpClient httpClient;
     private final Gson gson;
+    private final ApiKeyManager apiKeyManager;
 
     /**
      * Callback interface for candle data fetching.
@@ -71,6 +75,14 @@ public class FinnhubApiService {
     }
 
     /**
+     * Callback interface for insider transactions fetching.
+     */
+    public interface InsiderTransactionsCallback {
+        void onSuccess(InsiderTransactionResponse response);
+        void onError(String error);
+    }
+
+    /**
      * Constructor initializes HTTP client and JSON parser.
      */
     public FinnhubApiService() {
@@ -80,6 +92,9 @@ public class FinnhubApiService {
                 .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .build();
         this.gson = new Gson();
+        this.apiKeyManager = ApiKeyManager.getInstance();
+
+        Log.d(TAG, "FinnhubApiService initialized with " + apiKeyManager.getKeyCount() + " API keys");
     }
 
     /**
@@ -269,7 +284,7 @@ public class FinnhubApiService {
     public void fetchMarketNews(String category, MarketNewsCallback callback) {
         String url = NEWS_ENDPOINT +
                 "?category=" + category +
-                "&token=" + BuildConfig.FINNHUB_API_KEY;
+                "&token=" + apiKeyManager.getNextApiKey();
 
         Log.d(TAG, "Fetching news from: " + url);
 
@@ -323,7 +338,7 @@ public class FinnhubApiService {
                 "&resolution=" + resolution +
                 "&from=" + from +
                 "&to=" + to +
-                "&token=" + BuildConfig.FINNHUB_API_KEY;
+                "&token=" + apiKeyManager.getNextApiKey();
     }
 
     /**
@@ -332,7 +347,7 @@ public class FinnhubApiService {
     private String buildQuoteUrl(String symbol) {
         return QUOTE_ENDPOINT +
                 "?symbol=" + symbol +
-                "&token=" + BuildConfig.FINNHUB_API_KEY;
+                "&token=" + apiKeyManager.getNextApiKey();
     }
 
     /**
@@ -341,7 +356,73 @@ public class FinnhubApiService {
     private String buildMarketStatusUrl(String exchange) {
         return MARKET_STATUS_ENDPOINT +
                 "?exchange=" + exchange +
-                "&token=" + BuildConfig.FINNHUB_API_KEY;
+                "&token=" + apiKeyManager.getNextApiKey();
+    }
+
+    /**
+     * Fetches insider transactions for a stock symbol.
+     *
+     * @param symbol   Stock symbol (e.g., "AAPL")
+     * @param limit    Number of transactions to retrieve (max 100)
+     * @param callback Callback for handling response
+     */
+    public void fetchInsiderTransactions(String symbol, int limit, InsiderTransactionsCallback callback) {
+        String url = buildInsiderTransactionsUrl(symbol, limit);
+        Log.d(TAG, "Fetching insider transactions from: " + url);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Failed to fetch insider transactions", e);
+                callback.onError("Network error: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Unsuccessful response: " + response.code());
+                    callback.onError("HTTP error: " + response.code());
+                    return;
+                }
+
+                try {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Received insider transactions: " + responseBody);
+
+                    InsiderTransactionResponse transactionResponse = gson.fromJson(responseBody, InsiderTransactionResponse.class);
+
+                    if (transactionResponse != null && transactionResponse.getData() != null) {
+                        callback.onSuccess(transactionResponse);
+                    } else {
+                        String errorMsg = "Invalid transaction data";
+                        Log.w(TAG, errorMsg);
+                        callback.onError(errorMsg);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error parsing insider transactions", e);
+                    callback.onError("Parsing error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    /**
+     * Builds URL for insider transactions endpoint.
+     *
+     * @param symbol Stock symbol
+     * @param limit  Number of transactions to retrieve
+     * @return Complete URL string
+     */
+    private String buildInsiderTransactionsUrl(String symbol, int limit) {
+        return INSIDER_TRANSACTIONS_ENDPOINT +
+                "?symbol=" + symbol +
+                "&limit=" + Math.min(limit, 100) + // Ensure max 100
+                "&token=" + apiKeyManager.getNextApiKey();
     }
 
     /**

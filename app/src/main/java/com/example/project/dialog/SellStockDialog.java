@@ -141,7 +141,7 @@ public class SellStockDialog extends DialogFragment {
         String sharesStr = sharesInput.getText().toString();
 
         if (sharesStr.isEmpty()) {
-            Toast.makeText(getContext(), "กรุณาใส่จำนวนหุ้น", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.toast_enter_shares, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -149,12 +149,12 @@ public class SellStockDialog extends DialogFragment {
             double shares = Double.parseDouble(sharesStr);
 
             if (shares <= 0) {
-                Toast.makeText(getContext(), "จำนวนหุ้นต้องมากกว่า 0", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.toast_invalid_shares_zero, Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (shares > ownedShares) {
-                Toast.makeText(getContext(), "คุณมีหุ้นไม่พอสำหรับขาย", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.toast_insufficient_shares, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -163,7 +163,7 @@ public class SellStockDialog extends DialogFragment {
 
             if (success) {
                 Toast.makeText(getContext(),
-                        String.format("ขาย %.0f หุ้น %s สำเร็จ", shares, symbol),
+                        getString(R.string.toast_sell_success, String.valueOf((int)shares), symbol),
                         Toast.LENGTH_SHORT).show();
 
                 if (listener != null) {
@@ -172,11 +172,11 @@ public class SellStockDialog extends DialogFragment {
 
                 dismiss();
             } else {
-                Toast.makeText(getContext(), "การขายล้มเหลว กรุณาลองใหม่", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.toast_sell_failed, Toast.LENGTH_SHORT).show();
             }
 
         } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "จำนวนหุ้นไม่ถูกต้อง", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.toast_invalid_shares, Toast.LENGTH_SHORT).show();
         }
     }
 

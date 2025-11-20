@@ -135,9 +135,9 @@ public class SearchActivity extends AppCompatActivity {
             boolean added = watchlistRepository.addSymbol(stock.getSymbol());
             if (added) {
                 viewModel.addStock(stock.getSymbol());
-                Toast.makeText(this, "เพิ่ม " + stock.getSymbol() + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_add_watchlist, stock.getSymbol()), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, stock.getSymbol() + " อยู่ใน Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_already_in_watchlist, stock.getSymbol()), Toast.LENGTH_SHORT).show();
             }
 
             // เปิดหน้ารายละเอียด
@@ -238,9 +238,9 @@ public class SearchActivity extends AppCompatActivity {
         boolean added = watchlistRepository.addSymbol(symbol);
         if (added) {
             viewModel.addStock(symbol);
-            Toast.makeText(this, "เพิ่ม " + symbol + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_add_watchlist, symbol), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, symbol + " อยู่ใน Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_already_in_watchlist, symbol), Toast.LENGTH_SHORT).show();
         }
 
         // เปิดหน้ารายละเอียด

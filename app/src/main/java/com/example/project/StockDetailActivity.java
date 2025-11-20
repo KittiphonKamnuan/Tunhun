@@ -13,10 +13,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.project.adapter.InsiderTransactionAdapter;
 import com.example.project.dialog.BuyStockDialog;
 import com.example.project.dialog.SellStockDialog;
 import com.example.project.model.CandleData;
+import com.example.project.model.InsiderTransactionResponse;
 import com.example.project.model.PortfolioItem;
 import com.example.project.model.StockQuote;
 import com.example.project.model.TimeFrame;
@@ -67,6 +71,12 @@ public class StockDetailActivity extends AppCompatActivity {
     private TextView textLowPrice;
     private TextView textPrevClose;
 
+    // Insider Transactions
+    private RecyclerView recyclerInsiderTransactions;
+    private InsiderTransactionAdapter insiderTransactionAdapter;
+    private ProgressBar insiderLoading;
+    private TextView insiderEmptyText;
+
     // Data
     private String symbol;
     private double price;
@@ -96,6 +106,7 @@ public class StockDetailActivity extends AppCompatActivity {
 
         setupBackButton();
         setupButtons();
+        setupInsiderTransactions();
 
         fetchQuoteData();
 
@@ -104,6 +115,9 @@ public class StockDetailActivity extends AppCompatActivity {
 
         // โหลดกราฟครั้งแรก
         loadChartData();
+
+        // Load insider transactions
+        loadInsiderTransactions();
 
         startAutoRefresh();
     }
@@ -137,6 +151,11 @@ public class StockDetailActivity extends AppCompatActivity {
         textHighPrice = findViewById(R.id.text_high_price);
         textLowPrice = findViewById(R.id.text_low_price);
         textPrevClose = findViewById(R.id.text_prev_close);
+
+        // Insider Transactions Views
+        recyclerInsiderTransactions = findViewById(R.id.recycler_insider_transactions);
+        insiderLoading = findViewById(R.id.insider_loading);
+        insiderEmptyText = findViewById(R.id.insider_empty_text);
     }
 
     private void setupViewModel() {
@@ -169,19 +188,32 @@ public class StockDetailActivity extends AppCompatActivity {
             btnSell.setOnClickListener(v -> showSellDialog());
         }
         if (btnAddWatchlist != null) {
+            // Set initial button state
+            updateWatchlistButton();
+
             btnAddWatchlist.setOnClickListener(v -> {
                 if (symbol == null || symbol.trim().isEmpty()) {
-                    Toast.makeText(this, "Symbol not available yet", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.error_symbol_not_available, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                boolean added = watchlistRepository.addSymbol(symbol);
-                if (added) {
-                    viewModel.addStock(symbol);
-                    Toast.makeText(this, "Added " + symbol + " to Watchlist", Toast.LENGTH_SHORT).show();
+                // Toggle add/remove from watchlist
+                boolean isInWatchlist = watchlistRepository.isInWatchlist(symbol);
+
+                if (isInWatchlist) {
+                    // Remove from watchlist
+                    watchlistRepository.removeSymbol(symbol);
+                    viewModel.removeStock(symbol);
+                    Toast.makeText(this, getString(R.string.toast_remove_watchlist, symbol), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(this, symbol + " is already in your Watchlist", Toast.LENGTH_SHORT).show();
+                    // Add to watchlist
+                    watchlistRepository.addSymbol(symbol);
+                    viewModel.addStock(symbol);
+                    Toast.makeText(this, getString(R.string.toast_add_watchlist, symbol), Toast.LENGTH_SHORT).show();
                 }
+
+                // Update button appearance
+                updateWatchlistButton();
             });
         }
         if (btnShare != null) {
@@ -190,35 +222,55 @@ public class StockDetailActivity extends AppCompatActivity {
     }
 
     private void shareStockInfo() {
-        String shareText = "Check out " + symbol + " on Tunhun App!\n" +
-                "Price: " + String.format("%.2f", price) + "\n" +
-                "Change: " + StockColorHelper.formatChangePercent(changePercent);
+        String shareText = getString(R.string.app_name) + "\n" +
+                symbol + "\n" +
+                getString(R.string.dialog_current_price) + " " + String.format("%.2f", price) + "\n" +
+                getString(R.string.profit_loss_label) + ": " + StockColorHelper.formatChangePercent(changePercent);
 
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, shareText);
         sendIntent.setType("text/plain");
 
-        Intent shareIntent = Intent.createChooser(sendIntent, "Share via");
+        Intent shareIntent = Intent.createChooser(sendIntent, getString(R.string.btn_share));
         startActivity(shareIntent);
+    }
+
+    /**
+     * อัปเดตปุ่ม Watchlist ตามสถานะ (Add/Remove)
+     */
+    private void updateWatchlistButton() {
+        if (btnAddWatchlist == null || symbol == null) return;
+
+        boolean isInWatchlist = watchlistRepository.isInWatchlist(symbol);
+
+        if (isInWatchlist) {
+            // แสดงเป็นปุ่ม "ลบออกจาก Watchlist"
+            btnAddWatchlist.setText(R.string.stock_detail_remove_watchlist);
+            btnAddWatchlist.setIconResource(android.R.drawable.ic_menu_delete);
+        } else {
+            // แสดงเป็นปุ่ม "เพิ่มเข้า Watchlist"
+            btnAddWatchlist.setText(R.string.stock_detail_add_watchlist);
+            btnAddWatchlist.setIconResource(android.R.drawable.ic_input_add);
+        }
     }
 
     private void showBuyDialog() {
         if (price <= 0) {
-            Toast.makeText(this, "Please wait for price data...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.toast_wait_price, Toast.LENGTH_SHORT).show();
             return;
         }
         double availableBalance = portfolioRepository.getCurrentBalance();
         BuyStockDialog dialog = BuyStockDialog.newInstance(symbol, price, availableBalance);
         dialog.setOnBuyConfirmedListener((symbol, shares, totalCost) -> {
-            Toast.makeText(this, "Order placed successfully!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.toast_order_success, Toast.LENGTH_LONG).show();
         });
         dialog.show(getSupportFragmentManager(), "BuyStockDialog");
     }
 
     private void showSellDialog() {
         if (price <= 0) {
-            Toast.makeText(this, "Please wait for price data...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.toast_wait_price, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -226,13 +278,13 @@ public class StockDetailActivity extends AppCompatActivity {
         double ownedShares = item != null ? item.getShares() : 0;
 
         if (ownedShares <= 0) {
-            Toast.makeText(this, "คุณยังไม่มีหุ้นสำหรับขาย", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.toast_insufficient_shares, Toast.LENGTH_SHORT).show();
             return;
         }
 
         SellStockDialog dialog = SellStockDialog.newInstance(symbol, price, ownedShares);
         dialog.setOnSellConfirmedListener((symbol, shares, totalValue) -> {
-            Toast.makeText(this, "ขายหุ้นสำเร็จ!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.toast_sell_success, String.valueOf((int)shares), symbol), Toast.LENGTH_LONG).show();
         });
         dialog.show(getSupportFragmentManager(), "SellStockDialog");
     }
@@ -368,6 +420,50 @@ public class StockDetailActivity extends AppCompatActivity {
         else if (chipId == R.id.chip_5y) return TimeFrame.FIVE_YEARS;
         else if (chipId == R.id.chip_max) return TimeFrame.MAX;
         return TimeFrame.ONE_DAY;
+    }
+
+    private void setupInsiderTransactions() {
+        insiderTransactionAdapter = new InsiderTransactionAdapter();
+        recyclerInsiderTransactions.setLayoutManager(new LinearLayoutManager(this));
+        recyclerInsiderTransactions.setAdapter(insiderTransactionAdapter);
+    }
+
+    private void loadInsiderTransactions() {
+        if (symbol == null || symbol.trim().isEmpty()) {
+            return;
+        }
+
+        insiderLoading.setVisibility(View.VISIBLE);
+        insiderEmptyText.setVisibility(View.GONE);
+        recyclerInsiderTransactions.setVisibility(View.GONE);
+
+        apiService.fetchInsiderTransactions(symbol, 20, new FinnhubApiService.InsiderTransactionsCallback() {
+            @Override
+            public void onSuccess(InsiderTransactionResponse response) {
+                runOnUiThread(() -> {
+                    insiderLoading.setVisibility(View.GONE);
+
+                    if (response.getData() != null && !response.getData().isEmpty()) {
+                        insiderTransactionAdapter.setTransactions(response.getData());
+                        recyclerInsiderTransactions.setVisibility(View.VISIBLE);
+                        insiderEmptyText.setVisibility(View.GONE);
+                    } else {
+                        recyclerInsiderTransactions.setVisibility(View.GONE);
+                        insiderEmptyText.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    insiderLoading.setVisibility(View.GONE);
+                    recyclerInsiderTransactions.setVisibility(View.GONE);
+                    insiderEmptyText.setVisibility(View.VISIBLE);
+                    Log.w(TAG, "Failed to load insider transactions: " + error);
+                });
+            }
+        });
     }
 
     private void startAutoRefresh() {
