@@ -245,11 +245,13 @@ public class StockDetailActivity extends AppCompatActivity {
         boolean isInWatchlist = watchlistRepository.isInWatchlist(symbol);
 
         if (isInWatchlist) {
-            // Show filled star
+            // Show filled star (yellow)
             btnWatchlist.setImageResource(android.R.drawable.btn_star_big_on);
+            btnWatchlist.setAlpha(1.0f); // Fully opaque
         } else {
-            // Show empty star
+            // Show transparent star outline
             btnWatchlist.setImageResource(android.R.drawable.btn_star_big_off);
+            btnWatchlist.setAlpha(0.3f); // Semi-transparent
         }
     }
 

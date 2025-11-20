@@ -97,6 +97,13 @@
     <string name="dialog_shares_owned">จำนวนที่ถือ:</string>
     <string name="dialog_btn_confirm_sell">ยืนยันการขาย</string>
 
+    <!-- Unsaved Changes Dialog -->
+    <string name="dialog_unsaved_title">มีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก</string>
+    <string name="dialog_unsaved_message">คุณต้องการบันทึกการเปลี่ยนแปลงหรือไม่?</string>
+    <string name="dialog_save">บันทึก</string>
+    <string name="dialog_discard">ยกเลิก</string>
+    <string name="dialog_cancel">กลับไป</string>
+
     <!-- Toast Messages -->
     <string name="toast_buy_success">ซื้อ %1$s หุ้น %2$s สำเร็จ</string>
     <string name="toast_sell_success">ขาย %1$s หุ้น %2$s สำเร็จ</string>

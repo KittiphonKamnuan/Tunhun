@@ -1,11 +1,13 @@
 package com.example.project;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -24,6 +26,10 @@ public class SettingsActivity extends AppCompatActivity {
     private MaterialButton resetButton;
 
     private SharedPreferences prefs;
+
+    // Track initial settings
+    private boolean initialSoundEnabled;
+    private boolean initialNotificationsEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +61,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void loadSettings() {
-        soundSwitch.setChecked(prefs.getBoolean(KEY_SOUND_ENABLED, false));
-        notificationSwitch.setChecked(prefs.getBoolean(KEY_NOTIFICATIONS, true));
+        initialSoundEnabled = prefs.getBoolean(KEY_SOUND_ENABLED, false);
+        initialNotificationsEnabled = prefs.getBoolean(KEY_NOTIFICATIONS, true);
+
+        soundSwitch.setChecked(initialSoundEnabled);
+        notificationSwitch.setChecked(initialNotificationsEnabled);
     }
 
     private void setupListeners() {
@@ -86,10 +95,41 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            handleBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        handleBackPressed();
+    }
+
+    private void handleBackPressed() {
+        if (hasUnsavedChanges()) {
+            showUnsavedChangesDialog();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private boolean hasUnsavedChanges() {
+        boolean currentSound = soundSwitch.isChecked();
+        boolean currentNotifications = notificationSwitch.isChecked();
+
+        return currentSound != initialSoundEnabled ||
+               currentNotifications != initialNotificationsEnabled;
+    }
+
+    private void showUnsavedChangesDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_unsaved_title)
+                .setMessage(R.string.dialog_unsaved_message)
+                .setPositiveButton(R.string.dialog_save, (dialog, which) -> saveSettings())
+                .setNegativeButton(R.string.dialog_discard, (dialog, which) -> finish())
+                .setNeutralButton(R.string.dialog_cancel, null)
+                .show();
     }
 
     // Fixed refresh interval at 30 seconds

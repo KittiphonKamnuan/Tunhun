@@ -97,6 +97,13 @@
     <string name="dialog_shares_owned">Shares Owned:</string>
     <string name="dialog_btn_confirm_sell">Confirm Sale</string>
 
+    <!-- Unsaved Changes Dialog -->
+    <string name="dialog_unsaved_title">Unsaved Changes</string>
+    <string name="dialog_unsaved_message">Do you want to save your changes?</string>
+    <string name="dialog_save">Save</string>
+    <string name="dialog_discard">Discard</string>
+    <string name="dialog_cancel">Cancel</string>
+
     <!-- Toast Messages -->
     <string name="toast_buy_success">Successfully bought %1$s shares of %2$s</string>
     <string name="toast_sell_success">Successfully sold %1$s shares of %2$s</string>
