@@ -25,8 +25,10 @@ import com.example.project.adapter.StockDashboardAdapter;
 import com.example.project.model.MarketStatus;
 import com.example.project.model.Stock;
 import com.example.project.service.FinnhubApiService;
+import com.example.project.repository.WatchlistRepository;
 import com.example.project.viewmodel.StockViewModel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,6 +62,10 @@ public class DashboardFragment extends Fragment {
     private Handler marketStatusRefreshHandler;
     private Runnable marketStatusRefreshRunnable;
 
+    private WatchlistRepository watchlistRepository;
+    private List<String> watchlistSymbols = new ArrayList<>();
+    private List<Stock> latestStockList = new ArrayList<>();
+
     // Predefined popular stocks
     private static final List<String> TRENDING_STOCKS = Arrays.asList("AAPL", "TSLA", "GOOGL", "MSFT");
     private static final List<String> POPULAR_STOCKS = Arrays.asList("AMZN", "META", "NVDA", "NFLX");
@@ -77,6 +83,7 @@ public class DashboardFragment extends Fragment {
         initViews(view);
         setupViewModel();
         setupRecyclerViews();
+        observeWatchlist();
         loadStocks();
         loadMarketStatus();
         startAutoRefresh();
@@ -115,19 +122,18 @@ public class DashboardFragment extends Fragment {
     private void setupViewModel() {
         viewModel = new ViewModelProvider(requireActivity()).get(StockViewModel.class);
         apiService = new FinnhubApiService();
+        watchlistRepository = WatchlistRepository.getInstance(requireContext());
     }
 
     private void setupRecyclerViews() {
-        // ✅ แก้: Setup Watchlist RecyclerView
         watchlistAdapter = new StockAdapter();
         recyclerWatchlist.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerWatchlist.setAdapter(watchlistAdapter);
 
-        // ✅ แก้: Handle watchlist item click
         watchlistAdapter.setOnStockClickListener(this::openStockDetail);
 
-        // ✅ แก้: Handle watchlist item remove
         watchlistAdapter.setOnStockRemoveListener(stock -> {
+            watchlistRepository.removeSymbol(stock.getSymbol());
             viewModel.removeStock(stock.getSymbol());
             Toast.makeText(getContext(), "ลบ " + stock.getSymbol() + " ออกจาก Watchlist แล้ว", Toast.LENGTH_SHORT).show();
         });
@@ -163,26 +169,46 @@ public class DashboardFragment extends Fragment {
 
         // Observe stock updates
         viewModel.getStockList().observe(getViewLifecycleOwner(), stocks -> {
-            if (stocks != null) {
-                // ✅ แก้: แยก watchlist stocks ออกมา (หุ้นที่ไม่ใช่ trending/popular)
-                List<Stock> watchlistStocks = stocks.stream()
-                        .filter(stock -> !TRENDING_STOCKS.contains(stock.getSymbol())
-                                && !POPULAR_STOCKS.contains(stock.getSymbol()))
-                        .collect(Collectors.toList());
-
-                // ✅ แก้: แสดง/ซ่อน watchlist section
-                if (watchlistStocks.isEmpty()) {
-                    watchlistSection.setVisibility(View.GONE);
-                } else {
-                    watchlistSection.setVisibility(View.VISIBLE);
-                    watchlistAdapter.setStockList(watchlistStocks);
-                }
-
-                // Filter and update adapters
-                trendingAdapter.setStocks(filterStocks(stocks, TRENDING_STOCKS));
-                popularAdapter.setStocks(filterStocks(stocks, POPULAR_STOCKS));
+            if (stocks == null) {
+                latestStockList = new ArrayList<>();
+            } else {
+                latestStockList = stocks;
             }
+
+            updateWatchlistSection();
+
+            // Filter and update adapters
+            trendingAdapter.setStocks(filterStocks(latestStockList, TRENDING_STOCKS));
+            popularAdapter.setStocks(filterStocks(latestStockList, POPULAR_STOCKS));
         });
+    }
+
+    private void observeWatchlist() {
+        watchlistRepository.getWatchlistSymbols().observe(getViewLifecycleOwner(), symbols -> {
+            watchlistSymbols = symbols != null ? symbols : new ArrayList<>();
+            updateWatchlistSection();
+        });
+    }
+
+    private void updateWatchlistSection() {
+        if (watchlistSection == null) return;
+
+        if (watchlistSymbols == null || watchlistSymbols.isEmpty()) {
+            watchlistSection.setVisibility(View.GONE);
+            watchlistAdapter.setStockList(new ArrayList<>());
+            return;
+        }
+
+        List<Stock> watchlistStocks = latestStockList.stream()
+                .filter(stock -> watchlistSymbols.contains(stock.getSymbol()))
+                .collect(Collectors.toList());
+
+        if (watchlistStocks.isEmpty()) {
+            watchlistSection.setVisibility(View.GONE);
+        } else {
+            watchlistSection.setVisibility(View.VISIBLE);
+            watchlistAdapter.setStockList(watchlistStocks);
+        }
     }
 
     private List<Stock> filterStocks(List<Stock> allStocks, List<String> symbols) {

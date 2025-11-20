@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project.adapter.StockDashboardAdapter;
 import com.example.project.model.Stock;
+import com.example.project.repository.WatchlistRepository;
 import com.example.project.viewmodel.StockViewModel;
 import com.google.android.material.chip.Chip;
 
@@ -34,6 +35,7 @@ public class SearchActivity extends AppCompatActivity {
     private View emptyState;
     private StockDashboardAdapter resultsAdapter;
     private StockViewModel viewModel;
+    private WatchlistRepository watchlistRepository;
 
     private Chip chipAAPL, chipTSLA, chipGOOGL, chipMSFT, chipAMZN, chipMETA, chipNVDA, chipNFLX;
 
@@ -115,6 +117,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void setupViewModel() {
         viewModel = new ViewModelProvider(this).get(StockViewModel.class);
+        watchlistRepository = WatchlistRepository.getInstance(this);
 
         // Connect if not already connected
         if (!viewModel.isConnected()) {
@@ -129,9 +132,13 @@ public class SearchActivity extends AppCompatActivity {
 
         // ✅ แก้: Handle stock click - เพิ่มหุ้นเข้า watchlist และเปิดหน้ารายละเอียด
         resultsAdapter.setOnStockClickListener(stock -> {
-            // เพิ่มหุ้นเข้า watchlist
-            viewModel.addStock(stock.getSymbol());
-            Toast.makeText(this, "เพิ่ม " + stock.getSymbol() + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+            boolean added = watchlistRepository.addSymbol(stock.getSymbol());
+            if (added) {
+                viewModel.addStock(stock.getSymbol());
+                Toast.makeText(this, "เพิ่ม " + stock.getSymbol() + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, stock.getSymbol() + " อยู่ใน Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+            }
 
             // เปิดหน้ารายละเอียด
             openStockDetail(stock.getSymbol());
@@ -228,9 +235,13 @@ public class SearchActivity extends AppCompatActivity {
     private void searchAndAddStock(String symbol) {
         searchInput.setText(symbol);
 
-        // เพิ่มหุ้นเข้า watchlist
-        viewModel.addStock(symbol);
-        Toast.makeText(this, "เพิ่ม " + symbol + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+        boolean added = watchlistRepository.addSymbol(symbol);
+        if (added) {
+            viewModel.addStock(symbol);
+            Toast.makeText(this, "เพิ่ม " + symbol + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, symbol + " อยู่ใน Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+        }
 
         // เปิดหน้ารายละเอียด
         openStockDetail(symbol);

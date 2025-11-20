@@ -21,6 +21,7 @@ import com.example.project.model.PortfolioItem;
 import com.example.project.model.StockQuote;
 import com.example.project.model.TimeFrame;
 import com.example.project.repository.PortfolioRepository;
+import com.example.project.repository.WatchlistRepository;
 import com.example.project.service.FinnhubApiService;
 import com.example.project.util.ChartHelper;
 import com.example.project.util.PriceDataGenerator;
@@ -76,6 +77,7 @@ public class StockDetailActivity extends AppCompatActivity {
     private StockViewModel viewModel;
     private FinnhubApiService apiService;
     private PortfolioRepository portfolioRepository;
+    private WatchlistRepository watchlistRepository;
     private Handler refreshHandler;
     private Runnable refreshRunnable;
     private StockQuote latestQuote;
@@ -90,6 +92,7 @@ public class StockDetailActivity extends AppCompatActivity {
         setupViewModel();
         setupApiService();
         setupPortfolioRepository();
+        setupWatchlistRepository();
 
         setupBackButton();
         setupButtons();
@@ -148,6 +151,10 @@ public class StockDetailActivity extends AppCompatActivity {
         portfolioRepository = PortfolioRepository.getInstance(this);
     }
 
+    private void setupWatchlistRepository() {
+        watchlistRepository = WatchlistRepository.getInstance(this);
+    }
+
     private void setupBackButton() {
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
@@ -163,8 +170,18 @@ public class StockDetailActivity extends AppCompatActivity {
         }
         if (btnAddWatchlist != null) {
             btnAddWatchlist.setOnClickListener(v -> {
-                viewModel.addStock(symbol);
-                Toast.makeText(this, "Added " + symbol + " to Watchlist", Toast.LENGTH_SHORT).show();
+                if (symbol == null || symbol.trim().isEmpty()) {
+                    Toast.makeText(this, "Symbol not available yet", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                boolean added = watchlistRepository.addSymbol(symbol);
+                if (added) {
+                    viewModel.addStock(symbol);
+                    Toast.makeText(this, "Added " + symbol + " to Watchlist", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, symbol + " is already in your Watchlist", Toast.LENGTH_SHORT).show();
+                }
             });
         }
         if (btnShare != null) {

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.project.R;
 import com.example.project.StockDetailActivity;
 import com.example.project.adapter.StockSearchAdapter;
+import com.example.project.repository.WatchlistRepository;
 import com.example.project.viewmodel.StockViewModel;
 
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ public class SearchFragment extends Fragment {
     private TextView emptyView;
     private StockSearchAdapter adapter;
     private StockViewModel viewModel;
+    private WatchlistRepository watchlistRepository;
 
     // Comprehensive list of popular stocks for search
     private static final List<String> ALL_POPULAR_STOCKS = Arrays.asList(
@@ -118,6 +121,7 @@ public class SearchFragment extends Fragment {
 
     private void setupViewModel() {
         viewModel = new ViewModelProvider(requireActivity()).get(StockViewModel.class);
+        watchlistRepository = WatchlistRepository.getInstance(requireContext());
     }
 
     private void setupRecyclerView() {
@@ -126,7 +130,13 @@ public class SearchFragment extends Fragment {
         searchResults.setAdapter(adapter);
 
         adapter.setOnStockClickListener(symbol -> {
-            viewModel.addStock(symbol);
+            boolean added = watchlistRepository.addSymbol(symbol);
+            if (added) {
+                viewModel.addStock(symbol);
+                Toast.makeText(getContext(), "เพิ่ม " + symbol + " เข้า Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), symbol + " อยู่ใน Watchlist แล้ว", Toast.LENGTH_SHORT).show();
+            }
             openStockDetail(symbol);
         });
     }
