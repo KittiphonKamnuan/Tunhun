@@ -51,6 +51,7 @@ public class DashboardFragment extends Fragment {
     // ✅ แก้: เพิ่ม views สำหรับ watchlist section
     private View watchlistSection;
     private TextView textViewAllWatchlist;
+    private TextView textViewAll;
 
     // Market Status Views
     private TextView marketEmojiText;
@@ -95,6 +96,7 @@ public class DashboardFragment extends Fragment {
         watchlistSection = view.findViewById(R.id.watchlist_section);
         recyclerWatchlist = view.findViewById(R.id.recycler_watchlist);
         textViewAllWatchlist = view.findViewById(R.id.text_view_all_watchlist);
+        textViewAll = view.findViewById(R.id.text_view_all);
 
         recyclerTrending = view.findViewById(R.id.recycler_trending);
         recyclerPopular = view.findViewById(R.id.recycler_popular);
@@ -116,6 +118,11 @@ public class DashboardFragment extends Fragment {
                     ((MainActivity) getActivity()).navigateToWatchlist();
                 }
             });
+        }
+
+        // Set View All Trending click listener
+        if (textViewAll != null) {
+            textViewAll.setOnClickListener(v -> openSearchActivity());
         }
     }
 

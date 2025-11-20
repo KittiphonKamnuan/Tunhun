@@ -58,12 +58,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Navigate to Watchlist tab (Portfolio/Watchlist)
+     * Navigate to Search tab to view all watchlist stocks
      */
     public void navigateToWatchlist() {
         if (bottomNavigation != null) {
-            // เปลี่ยนเป็น id ของแท็บ Watchlist ของคุณ
-            bottomNavigation.setSelectedItemId(R.id.navigation_portfolio);
+            // Navigate to Search tab where users can see all stocks
+            bottomNavigation.setSelectedItemId(R.id.navigation_search);
         }
     }
 }

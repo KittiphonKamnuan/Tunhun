@@ -130,13 +130,7 @@ public class SearchFragment extends Fragment {
         searchResults.setAdapter(adapter);
 
         adapter.setOnStockClickListener(symbol -> {
-            boolean added = watchlistRepository.addSymbol(symbol);
-            if (added) {
-                viewModel.addStock(symbol);
-                Toast.makeText(getContext(), getString(R.string.toast_add_watchlist, symbol), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getContext(), getString(R.string.toast_already_in_watchlist, symbol), Toast.LENGTH_SHORT).show();
-            }
+            // Just open stock detail, don't auto-add to watchlist
             openStockDetail(symbol);
         });
     }

@@ -130,17 +130,8 @@ public class SearchActivity extends AppCompatActivity {
         recyclerResults.setLayoutManager(new LinearLayoutManager(this));
         recyclerResults.setAdapter(resultsAdapter);
 
-        // ✅ แก้: Handle stock click - เพิ่มหุ้นเข้า watchlist และเปิดหน้ารายละเอียด
+        // Handle stock click - just open stock detail
         resultsAdapter.setOnStockClickListener(stock -> {
-            boolean added = watchlistRepository.addSymbol(stock.getSymbol());
-            if (added) {
-                viewModel.addStock(stock.getSymbol());
-                Toast.makeText(this, getString(R.string.toast_add_watchlist, stock.getSymbol()), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, getString(R.string.toast_already_in_watchlist, stock.getSymbol()), Toast.LENGTH_SHORT).show();
-            }
-
-            // เปิดหน้ารายละเอียด
             openStockDetail(stock.getSymbol());
         });
     }
