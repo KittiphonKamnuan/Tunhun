@@ -61,9 +61,9 @@ public class StockDetailActivity extends AppCompatActivity {
     private TextView chartErrorText;
     private FloatingActionButton btnBack;
     private ImageView btnShare;
+    private ImageView btnWatchlist;
     private MaterialButton btnBuy;
     private MaterialButton btnSell;
-    private MaterialButton btnAddWatchlist;
 
     // Stock Information TextViews
     private TextView textOpenPrice;
@@ -143,9 +143,9 @@ public class StockDetailActivity extends AppCompatActivity {
         chartErrorText = findViewById(R.id.chart_error_text);
         btnBack = findViewById(R.id.btn_back);
         btnShare = findViewById(R.id.btn_share);
+        btnWatchlist = findViewById(R.id.btn_watchlist);
         btnBuy = findViewById(R.id.btn_buy);
         btnSell = findViewById(R.id.btn_sell);
-        btnAddWatchlist = findViewById(R.id.btn_add_watchlist);
 
         textOpenPrice = findViewById(R.id.text_open_price);
         textHighPrice = findViewById(R.id.text_high_price);
@@ -187,11 +187,11 @@ public class StockDetailActivity extends AppCompatActivity {
         if (btnSell != null) {
             btnSell.setOnClickListener(v -> showSellDialog());
         }
-        if (btnAddWatchlist != null) {
+        if (btnWatchlist != null) {
             // Set initial button state
-            updateWatchlistButton();
+            updateWatchlistIcon();
 
-            btnAddWatchlist.setOnClickListener(v -> {
+            btnWatchlist.setOnClickListener(v -> {
                 if (symbol == null || symbol.trim().isEmpty()) {
                     Toast.makeText(this, R.string.error_symbol_not_available, Toast.LENGTH_SHORT).show();
                     return;
@@ -212,8 +212,8 @@ public class StockDetailActivity extends AppCompatActivity {
                     Toast.makeText(this, getString(R.string.toast_add_watchlist, symbol), Toast.LENGTH_SHORT).show();
                 }
 
-                // Update button appearance
-                updateWatchlistButton();
+                // Update icon appearance
+                updateWatchlistIcon();
             });
         }
         if (btnShare != null) {
@@ -237,21 +237,19 @@ public class StockDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * อัปเดตปุ่ม Watchlist ตามสถานะ (Add/Remove)
+     * Update watchlist star icon based on watchlist status
      */
-    private void updateWatchlistButton() {
-        if (btnAddWatchlist == null || symbol == null) return;
+    private void updateWatchlistIcon() {
+        if (btnWatchlist == null || symbol == null) return;
 
         boolean isInWatchlist = watchlistRepository.isInWatchlist(symbol);
 
         if (isInWatchlist) {
-            // แสดงเป็นปุ่ม "ลบออกจาก Watchlist"
-            btnAddWatchlist.setText(R.string.stock_detail_remove_watchlist);
-            btnAddWatchlist.setIconResource(android.R.drawable.ic_menu_delete);
+            // Show filled star
+            btnWatchlist.setImageResource(android.R.drawable.btn_star_big_on);
         } else {
-            // แสดงเป็นปุ่ม "เพิ่มเข้า Watchlist"
-            btnAddWatchlist.setText(R.string.stock_detail_add_watchlist);
-            btnAddWatchlist.setIconResource(android.R.drawable.ic_input_add);
+            // Show empty star
+            btnWatchlist.setImageResource(android.R.drawable.btn_star_big_off);
         }
     }
 

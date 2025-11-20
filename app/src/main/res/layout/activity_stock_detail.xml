@@ -32,6 +32,19 @@
             android:layout_weight="1" />
 
         <ImageView
+            android:id="@+id/btn_watchlist"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@android:drawable/btn_star_big_off"
+            app:tint="@color/text_primary"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Add to Watchlist"
+            android:layout_marginEnd="8dp" />
+
+        <ImageView
             android:id="@+id/btn_share"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -486,28 +499,12 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:text="@string/stock_detail_sell"
             android:textSize="16sp"
             android:textStyle="bold"
             app:backgroundTint="@color/negative_red"
             app:cornerRadius="12dp"
             android:textColor="@android:color/white" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_add_watchlist"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="@string/stock_detail_add_watchlist"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:backgroundTint="@color/surface"
-            app:cornerRadius="12dp"
-            android:textColor="@color/dimePurple"
-            app:strokeColor="@color/dimePurple"
-            app:strokeWidth="2dp" />
     </LinearLayout>
 
 </LinearLayout>
