@@ -103,14 +103,18 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        handleBackPressed();
+        if (hasUnsavedChanges()) {
+            showUnsavedChangesDialog();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void handleBackPressed() {
         if (hasUnsavedChanges()) {
             showUnsavedChangesDialog();
         } else {
-            super.onBackPressed();
+            finish();
         }
     }
 
