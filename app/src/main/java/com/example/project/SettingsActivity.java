@@ -49,7 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Settings");
+            getSupportActionBar().setTitle(R.string.menu_settings);
         }
     }
 
@@ -79,7 +79,7 @@ public class SettingsActivity extends AppCompatActivity {
         editor.putBoolean(KEY_NOTIFICATIONS, notificationSwitch.isChecked());
         editor.apply();
 
-        Toast.makeText(this, "Settings saved!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.toast_settings_saved, Toast.LENGTH_SHORT).show();
         finish();
     }
 
@@ -89,7 +89,7 @@ public class SettingsActivity extends AppCompatActivity {
         editor.apply();
 
         loadSettings();
-        Toast.makeText(this, "Settings reset to default", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.toast_settings_reset, Toast.LENGTH_SHORT).show();
     }
 
     @Override

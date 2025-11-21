@@ -123,6 +123,8 @@
     <string name="toast_feature_coming_soon">This feature is coming soon</string>
     <string name="toast_settings_coming_soon">Settings feature coming soon</string>
     <string name="toast_logout_coming_soon">Logout feature coming soon</string>
+    <string name="toast_settings_saved">Settings saved successfully!</string>
+    <string name="toast_settings_reset">Settings reset to default</string>
 
     <!-- Errors -->
     <string name="error_loading">Error loading data</string>
