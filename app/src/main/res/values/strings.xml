@@ -37,6 +37,10 @@
     <string name="search_page_title">ค้นหาหุ้น</string>
     <string name="search_input_hint">ค้นหาหุ้น...</string>
     <string name="search_no_result">ไม่พบหุ้น</string>
+    <string name="search_popular_title">ค้นหายอดนิยม</string>
+    <string name="search_enter_symbol">ใส่สัญลักษณ์หุ้นเพื่อค้นหา</string>
+    <string name="search_no_results_title">ไม่พบผลลัพธ์</string>
+    <string name="search_no_results_desc">ลองค้นหาสัญลักษณ์หุ้นอื่น</string>
 
     <!-- Market Sessions -->
     <string name="session_regular">เวลาทำการ</string>
@@ -59,8 +63,8 @@
     <!-- Stock Detail -->
     <string name="stock_detail_buy">ซื้อ</string>
     <string name="stock_detail_sell">ขาย</string>
-    <string name="stock_detail_add_watchlist">เพิ่ม Watchlist</string>
-    <string name="stock_detail_remove_watchlist">ลบจาก Watchlist</string>
+    <string name="stock_detail_add_watchlist">เพิ่มรายการติดตาม</string>
+    <string name="stock_detail_remove_watchlist">ลบออกจากรายการติดตาม</string>
     <string name="stock_info_title">ข้อมูลหุ้น</string>
     <string name="stock_info_open">เปิด</string>
     <string name="stock_info_high">สูงสุด</string>
@@ -77,9 +81,9 @@
     <string name="insider_loading">กำลังโหลดข้อมูล...</string>
 
     <!-- Watchlist -->
-    <string name="watchlist_section_title">Watchlist</string>
+    <string name="watchlist_section_title">รายการติดตาม</string>
     <string name="watchlist_section_subtitle">หุ้นที่คุณติดตาม</string>
-    <string name="watchlist_empty">ยังไม่มีหุ้นใน Watchlist</string>
+    <string name="watchlist_empty">ยังไม่มีหุ้นในรายการติดตาม</string>
     <string name="watchlist_empty_action">เพิ่มหุ้นเพื่อเริ่มต้น</string>
 
     <!-- Buy Dialog -->
@@ -104,6 +108,19 @@
     <string name="dialog_discard">ยกเลิก</string>
     <string name="dialog_cancel">กลับไป</string>
 
+    <!-- Settings -->
+    <string name="settings_app_settings">การตั้งค่าแอป</string>
+    <string name="settings_auto_refresh">รีเฟรชอัตโนมัติ</string>
+    <string name="settings_auto_refresh_desc">อัปเดตทุก 30 วินาที (ถาวร)</string>
+    <string name="settings_notifications_sound">การแจ้งเตือนและเสียง</string>
+    <string name="settings_enable_notifications">เปิดการแจ้งเตือน</string>
+    <string name="settings_notifications_desc">รับการแจ้งเตือนเมื่อราคาเปลี่ยนแปลง</string>
+    <string name="settings_sound_effects">เอฟเฟกต์เสียง</string>
+    <string name="settings_sound_desc">เล่นเสียงเมื่อราคาอัปเดต</string>
+    <string name="settings_button_reset">รีเซ็ต</string>
+    <string name="settings_button_save">บันทึก</string>
+    <string name="settings_app_info">ทันหุ้น v1.0\nติดตามหุ้นแบบ Real-time</string>
+
     <!-- Toast Messages -->
     <string name="toast_buy_success">ซื้อ %1$s หุ้น %2$s สำเร็จ</string>
     <string name="toast_sell_success">ขาย %1$s หุ้น %2$s สำเร็จ</string>
@@ -114,9 +131,9 @@
     <string name="toast_enter_shares">กรุณาใส่จำนวนหุ้น</string>
     <string name="toast_purchase_failed">การซื้อล้มเหลว กรุณาลองใหม่</string>
     <string name="toast_sell_failed">การขายล้มเหลว กรุณาลองใหม่</string>
-    <string name="toast_add_watchlist">เพิ่ม %s เข้า Watchlist แล้ว</string>
-    <string name="toast_remove_watchlist">ลบ %s ออกจาก Watchlist แล้ว</string>
-    <string name="toast_already_in_watchlist">%s อยู่ใน Watchlist แล้ว</string>
+    <string name="toast_add_watchlist">เพิ่ม %s เข้ารายการติดตามแล้ว</string>
+    <string name="toast_remove_watchlist">ลบ %s ออกจากรายการติดตามแล้ว</string>
+    <string name="toast_already_in_watchlist">%s อยู่ในรายการติดตามแล้ว</string>
     <string name="toast_wait_price">กรุณารอโหลดราคาหุ้น</string>
     <string name="toast_order_success">สั่งซื้อสำเร็จ!</string>
     <string name="toast_check_portfolio">ตรวจสอบพอร์ตได้ที่แท็บ Portfolio</string>

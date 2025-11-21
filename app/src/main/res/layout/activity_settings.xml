@@ -51,7 +51,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="App Settings"
+                        android:text="@string/settings_app_settings"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary"
@@ -75,14 +75,14 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Auto Refresh"
+                                android:text="@string/settings_auto_refresh"
                                 android:textSize="16sp"
                                 android:textColor="@color/text_primary" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Updates every 30 seconds (Fixed)"
+                                android:text="@string/settings_auto_refresh_desc"
                                 android:textSize="13sp"
                                 android:textColor="@color/positive_green"
                                 android:layout_marginTop="4dp" />
@@ -115,7 +115,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Notifications &amp; Sound"
+                        android:text="@string/settings_notifications_sound"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary"
@@ -139,14 +139,14 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Enable Notifications"
+                                android:text="@string/settings_enable_notifications"
                                 android:textSize="16sp"
                                 android:textColor="@color/text_primary" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Get notified about price changes"
+                                android:text="@string/settings_notifications_desc"
                                 android:textSize="13sp"
                                 android:textColor="@color/text_secondary"
                                 android:layout_marginTop="4dp" />
@@ -181,14 +181,14 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Sound Effects"
+                                android:text="@string/settings_sound_effects"
                                 android:textSize="16sp"
                                 android:textColor="@color/text_primary" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Play sound when prices update"
+                                android:text="@string/settings_sound_desc"
                                 android:textSize="13sp"
                                 android:textColor="@color/text_secondary"
                                 android:layout_marginTop="4dp" />
@@ -215,7 +215,7 @@
                     android:layout_height="56dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    android:text="RESET"
+                    android:text="@string/settings_button_reset"
                     android:textSize="15sp"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     app:strokeColor="@color/primary"
@@ -227,7 +227,7 @@
                     android:layout_height="56dp"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:text="SAVE"
+                    android:text="@string/settings_button_save"
                     android:textSize="15sp"
                     android:backgroundTint="@color/primary"
                     app:cornerRadius="12dp" />
@@ -237,7 +237,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ทันหุ้น v1.0\nReal-time Stock Tracker"
+                android:text="@string/settings_app_info"
                 android:textSize="13sp"
                 android:textColor="@color/text_secondary"
                 android:textAlignment="center"

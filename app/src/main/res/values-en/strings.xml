@@ -37,6 +37,10 @@
     <string name="search_page_title">Search Stocks</string>
     <string name="search_input_hint">Search stocks...</string>
     <string name="search_no_result">No stocks found</string>
+    <string name="search_popular_title">Popular Searches</string>
+    <string name="search_enter_symbol">Enter a stock symbol to search</string>
+    <string name="search_no_results_title">No results found</string>
+    <string name="search_no_results_desc">Try searching for another stock symbol</string>
 
     <!-- Market Sessions -->
     <string name="session_regular">Regular Hours</string>
@@ -103,6 +107,19 @@
     <string name="dialog_save">Save</string>
     <string name="dialog_discard">Discard</string>
     <string name="dialog_cancel">Cancel</string>
+
+    <!-- Settings -->
+    <string name="settings_app_settings">App Settings</string>
+    <string name="settings_auto_refresh">Auto Refresh</string>
+    <string name="settings_auto_refresh_desc">Updates every 30 seconds (Fixed)</string>
+    <string name="settings_notifications_sound">Notifications &amp; Sound</string>
+    <string name="settings_enable_notifications">Enable Notifications</string>
+    <string name="settings_notifications_desc">Get notified about price changes</string>
+    <string name="settings_sound_effects">Sound Effects</string>
+    <string name="settings_sound_desc">Play sound when prices update</string>
+    <string name="settings_button_reset">RESET</string>
+    <string name="settings_button_save">SAVE</string>
+    <string name="settings_app_info">TunHun v1.0\nReal-time Stock Tracker</string>
 
     <!-- Toast Messages -->
     <string name="toast_buy_success">Successfully bought %1$s shares of %2$s</string>
