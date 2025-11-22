@@ -9,7 +9,7 @@
     <string name="nav_profile">โปรไฟล์</string>
 
     <!-- Dashboard -->
-    <string name="app_dashboard_title">Dashboard</string>
+    <string name="app_dashboard_title">หน้าหลัก</string>
     <string name="dashboard_welcome">ยินดีต้อนรับสู่</string>
     <string name="dashboard_title">ทันหุ้น Dashboard</string>
     <string name="search_hint">ค้นหาหุ้น...</string>
@@ -23,6 +23,9 @@
     <string name="popular_stocks">หุ้นแนะนำ</string>
     <string name="popular_desc">แนะนำสำหรับนักลงทุน</string>
     <string name="view_all">ดูทั้งหมด</string>
+    <string name="Latest_arket_News">ข่าวตลาดล่าสุด</string>
+    <string name="Updates_from_global_financial_markets">อัพเดทจากตลาดการเงินโลก</string>
+
 
     <!-- Portfolio -->
     <string name="balance_label">เงินคงเหลือ</string>
@@ -156,6 +159,6 @@
     <string name="btn_share">แชร์</string>
     <string name="loading">กำลังโหลด...</string>
     <string name="live">Live</string>
-    <string name="shares">shares</string>
-    <string name="avg_cost">Avg. Cost</string>
+    <string name="shares">หุ้น</string>
+    <string name="avg_cost">ต้นทุนเฉลี่ย</string>
 </resources>

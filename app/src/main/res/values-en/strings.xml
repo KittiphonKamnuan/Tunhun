@@ -23,6 +23,8 @@
     <string name="popular_stocks">Recommended Stocks</string>
     <string name="popular_desc">Recommended for investors</string>
     <string name="view_all">View All</string>
+    <string name="Latest_arket_News">Latest arket News</string>
+    <string name="Updates_from_global_financial_markets">Updates from global financial markets</string>
 
     <!-- Portfolio -->
     <string name="balance_label">Available Balance</string>

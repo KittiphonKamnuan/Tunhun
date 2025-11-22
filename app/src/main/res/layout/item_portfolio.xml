@@ -48,11 +48,11 @@
                     android:id="@+id/text_shares"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10 shares"
+                    android:text="@string/shares"
                     android:textSize="13sp"
                     android:textColor="@color/text_secondary"
                     android:layout_marginTop="2dp"
-                    tools:text="10 shares" />
+                    tools:text="@string/shares" />
             </LinearLayout>
 
             <TextView
@@ -90,7 +90,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Avg. Cost"
+                    android:text="@string/avg_cost"
                     android:textSize="12sp"
                     android:textColor="@color/text_secondary" />
 
@@ -118,7 +118,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Profit/Loss"
+                    android:text="@string/profit_loss_label"
                     android:textSize="12sp"
                     android:textColor="@color/text_secondary" />
 
